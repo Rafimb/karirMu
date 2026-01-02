@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 // Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 // Pages
 import Home from "./public/Home";
@@ -10,14 +11,17 @@ import Home from "./public/Home";
 // Auth
 import Login from "./auth/Login";
 import Register from "./auth/Register";
-import LoginPelamar from "./auth/LoginPelamar";
-import RegisterPelamar from "./auth/RegisterPelamar";
+import CheckEmail from "./auth/CheckEmail";
+import ActivateAccount from "./auth/ActivateAccount";
+import SetPassword from "./auth/SetPassword";
 
 // AdminAUM
 import DashboardAdminAum from "./pages/adminAum/DashboardAdminAum";
 import ProfilAum from "./pages/adminAum/ProfilAum";
-import LegalitasAum from "./pages/adminAum/LegalitasAum";
 import DetailProfilAum from "./pages/adminAum/DetailProfilAum";
+
+import DataAum from "./components/adminAum/DataAum";
+import DokumenAum from "./components/adminAum/DokumenAum";
 
 // Pelamar
 import DashboardPelamar from "./pages/pelamar/DashboardPelamar";
@@ -25,7 +29,6 @@ import DashboardPelamar from "./pages/pelamar/DashboardPelamar";
 function App() {
   const location = useLocation();
 
-  // ❌ SEMBUNYIKAN Navbar & Footer untuk AUTH, ADMIN, PELAMAR
   const hideNavbarFooter =
     location.pathname.startsWith("/admin-aum") ||
     location.pathname.startsWith("/auth") ||
@@ -41,14 +44,18 @@ function App() {
         {/* AUTH */}
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
-        <Route path="/auth/loginPelamar" element={<LoginPelamar />} />
-        <Route path="/auth/registerPelamar" element={<RegisterPelamar />} />
+        <Route path="/auth/check-email" element={<CheckEmail />} />
+        <Route path="/auth/activate" element={<ActivateAccount />} />
+        <Route path="/auth/set-password" element={<SetPassword />} />
 
-        {/* ADMIN AUM */}
-        <Route path="/admin-aum/dashboard" element={<DashboardAdminAum />} />
-        <Route path="/admin-aum/profil" element={<ProfilAum />} />
-        <Route path="/admin-aum/legalitas" element={<LegalitasAum />} />
-        <Route path="/admin-aum/detail" element={<DetailProfilAum />} />
+        {/* ADMIN AUM (PROTECTED) */}
+        <Route element={<ProtectedRoute allowedRole={["company_hrd"]} />}>
+          <Route path="/admin-aum/dashboard" element={<DashboardAdminAum />} />
+          <Route path="/admin-aum/profil" element={<ProfilAum />} />
+          <Route path="/admin-aum/detail" element={<DetailProfilAum />} />
+          <Route path="/admin-aum/data" element={<DataAum />} />
+          <Route path="/admin-aum/dokumen" element={<DokumenAum/>} />
+        </Route>
 
         {/* PELAMAR */}
         <Route path="/pelamar/dashboard" element={<DashboardPelamar />} />

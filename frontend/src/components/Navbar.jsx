@@ -23,10 +23,7 @@ const Navbar = () => {
               Kontak
             </NavLink>
             <NavLink to="/auth/login" className="hover:underline">
-              AdminAum
-            </NavLink>
-            <NavLink to="/auth/loginPelamar" className="hover:underline">
-              Pelamar
+              login
             </NavLink>
           </div>
 
