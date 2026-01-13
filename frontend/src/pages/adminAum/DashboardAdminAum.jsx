@@ -91,9 +91,13 @@ const DashboardAdminAum = () => {
           )}
 
           {/* RINGKASAN AKTIVITAS */}
-          <div className="text-black font-medium bg-[#A2A9B0] px-4 py-3 rounded-t-xl">
-            Ringkasan Aktivitas
-          </div>
+    <div
+  className="text-white font-medium px-4 py-3 rounded-t-xl"
+  style={{ background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)" }}
+>
+  Ringkasan Aktivitas
+</div>
+
           <div className="bg-white p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 rounded-b-xl border-x border-b border-gray-200 shadow-sm">
             {[
               ["Total Lowongan", "12"],
@@ -121,9 +125,13 @@ const DashboardAdminAum = () => {
           </div>
 
           {/* DAFTAR MANAJEMEN PELAMAR */}
-          <div className="text-black font-medium bg-[#A2A9B0] px-4 py-3 rounded-t-xl mt-2">
-            Daftar Manajemen Pelamar
-          </div>
+<div
+  className="text-white font-medium px-4 py-3 rounded-t-xl"
+  style={{ background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)" }}
+>
+  Daftar Manajemen Pelamar
+</div>
+
           <div className="bg-white overflow-x-auto rounded-b-xl border border-gray-200 shadow-sm">
             <table className="w-full min-w-800px text-sm border-collapse">
               <thead className="bg-gray-50 text-gray-700">
@@ -164,9 +172,13 @@ const DashboardAdminAum = () => {
           </div>
 
           {/* AKTIVITAS TERBARU */}
-          <div className="text-black font-medium bg-[#A2A9B0] px-4 py-3 rounded-t-xl mt-2">
-            Aktivitas Terbaru
-          </div>
+<div
+  className="text-white font-medium px-4 py-3 rounded-t-xl"
+  style={{ background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)" }}
+>
+  Aktivitas Terbaru
+</div>
+
           <div className="bg-white rounded-b-xl border border-gray-200 shadow-sm overflow-hidden">
             <table className="w-full text-sm border-collapse">
               <tbody>

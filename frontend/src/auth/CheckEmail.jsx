@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import CheckEmailIcon from "../assets/icons/Icons-Check-Email.svg";
-import Logo from "../assets/icons/logo.svg";
+import CheckEmailIcon from "../assets/icons/Icons-Check-Email1.svg";
+import Logo from "../assets/img/logoz.png";
 
 const CheckEmail = () => {
   const location = useLocation();
@@ -65,20 +65,25 @@ const CheckEmail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#C1C7CD] flex items-center justify-center px-4 sm:px-6">
+    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center px-4 sm:px-6">
       <div
+        style={{
+          background: "linear-gradient(to bottom, #004F8F, #009B49)",
+        }}
         className="
           w-full
           max-w-sm
           sm:max-w-md
-          bg-white
-          rounded-lg
+          rounded-[48px]
           p-6
           sm:p-10
           text-center
           shadow-lg
+          text-white
         "
       >
+
+
         {/* LOGO */}
         <div
           className="flex justify-center mb-4 sm:mb-6 cursor-pointer"
@@ -86,7 +91,7 @@ const CheckEmail = () => {
         >
           <img
             src={Logo}
-            alt="Logo"
+            alt="Logoz"
             className="h-8 sm:h-10 object-contain"
           />
         </div>
@@ -106,7 +111,7 @@ const CheckEmail = () => {
         </div>
 
         {/* DESCRIPTION */}
-        <p className="text-gray-700 text-sm sm:text-base mb-4">
+        <p className="text-white text-sm sm:text-base mb-4">
           Permintaan registrasi berhasil.
           <br />
           Link aktivasi telah dikirim ke email Anda.
@@ -127,21 +132,24 @@ const CheckEmail = () => {
         )}
 
         {/* BACK */}
-        <Link
-          to="/auth/register"
-          className="
-            inline-flex items-center justify-center gap-2
-            border border-blue-600 text-blue-600
-            px-5 py-2 rounded font-medium
-            hover:bg-blue-50 transition
-            text-sm sm:text-base
-          "
-        >
+{/* BACK */}
+<Link
+  to="/auth/register"
+  className="
+    inline-flex items-center justify-center gap-2
+    border border-white text-white
+    px-5 py-2 rounded font-medium
+    hover:bg-[#004F8F]
+    transition-colors duration-200 ease-in-out
+    text-sm sm:text-base
+  "
+>
+
           ← Kembali ke Register
         </Link>
 
         {/* RESEND */}
-        <p className="text-xs sm:text-sm text-gray-500 mt-5 sm:mt-6">
+        <p className="text-xs sm:text-sm text-white mt-5 sm:mt-6">
           Belum menerima email?{" "}
           {counter > 0 ? (
             <>Tunggu {counter} detik</>

@@ -55,11 +55,14 @@ const DataAum = ({ formData = {}, setFormData, submitHandler, agree, setAgree })
   const navigate = useNavigate();
   const fileRef = useRef(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   
   // State untuk API Wilayah
   const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [loadingCity, setLoadingCity] = useState(false);
+
 
   // 1. Fetch Daftar Provinsi saat Mount
   useEffect(() => {
@@ -122,29 +125,31 @@ const DataAum = ({ formData = {}, setFormData, submitHandler, agree, setAgree })
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const onInternalSubmit = () => {
+ const onInternalSubmit = async () => {
+  if (!formData.company_name || !formData.company_email || !formData.company_phone) {
+    alert("Nama perusahaan, email, dan nomor telepon wajib diisi!");
+    return false;
+  }
+
+  try {
     const data = new FormData();
-    data.append("company_name", formData.company_name || "");
-    data.append("company_email", formData.company_email || "");
-    data.append("company_phone", formData.company_phone || "");
+    data.append("company_name", formData.company_name);
+    data.append("company_email", formData.company_email);
+    data.append("company_phone", formData.company_phone);
     data.append("company_url", formData.company_url || "");
     data.append("description", formData.description || "");
     data.append("address", formData.address || "");
     data.append("industry", formData.industry || "");
     data.append("employee_range", formData.employee_range || "");
+    data.append("province", formData.province || "");
+    data.append("city", formData.city || "");
 
-    // Backend Anda minta JSON string
-data.append("province", formData.province || "");
-data.append("city", formData.city || "");
+    if (formData.logo instanceof File) {
+      data.append("logo", formData.logo);
+    }
 
-
-if (formData.logo instanceof File) {
-  data.append("logo", formData.logo);
-}
-
-    // Logic dokumen (sesuaikan jika ada input file tambahan)
     const names = [];
-    if (formData.documents) {
+    if (formData.documents?.length) {
       formData.documents.forEach((doc) => {
         data.append("documents", doc.file);
         names.push(doc.name);
@@ -152,45 +157,159 @@ if (formData.logo instanceof File) {
     }
     data.append("document_names", JSON.stringify(names));
 
-    submitHandler(data)
-    .then((res) => {
-      // Jika sukses, redirect ke DetailProfilAum
-      navigate("/admin-aum/profil/detail", { state: { formData } }); 
-      // `state` bisa dipakai di DetailProfilAum untuk menampilkan data baru
-    })
-    .catch((err) => {
-      console.error("Gagal menyimpan data:", err);
-      alert("Gagal menyimpan data. Cek console untuk detail.");
-    });
-  };
+    await submitHandler(data);
+    return true;
+  } catch (err) {
+    console.error("Gagal menyimpan data:", err);
+    return false;
+  }
+};
+
 
   return (
     <>
-      <div className="text-black font-medium bg-[#A2A9B0] px-4 py-3 rounded-t-lg mb-4">
-        Informasi Umum
+{showConfirm && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="bg-white w-623px h-439px rounded-xl shadow-lg overflow-hidden">
+
+      {/* JUDUL */}
+      <div className="px-6 py-5">
+        <h2 className="text-xl font-bold text-center">
+          Ajukan Verifikasi Profil?
+        </h2>
       </div>
 
+      <div className="px-6">
+        <hr className="border-gray-200" />
+      </div>
+
+      {/* ISI */}
+      <div className="px-6 py-4 text-sm text-gray-700">
+        Apakah Anda yakin data profil dan dokumen legalitas instansi sudah
+        benar dan sesuai dengan dokumen asli?
+      </div>
+
+      {/* CATATAN */}
+      <div className="px-6 py-4 text-sm text-gray-500 space-y-1">
+        <p>Catatan:</p>
+        <p>- Data yang diajukan akan diverifikasi oleh Admin Super.</p>
+        <p>- Anda tidak dapat mengubah data profil selama proses verifikasi berlangsung.</p>
+      </div>
+
+      <div className="px-6">
+        <hr className="border-gray-200" />
+      </div>
+
+      {/* BUTTON */}
+      <div className="px-6 py-5 flex gap-4">
+        <button
+          onClick={() => setShowConfirm(false)}
+          className="flex-1 border border-[#409144] text-[#409144] py-2.5 rounded-lg font-semibold hover:bg-green-50"
+        >
+          Periksa Kembali
+        </button>
+
+
+
+<button
+  onClick={async () => {
+    const success = await onInternalSubmit();
+
+    if (success === true) {
+      setShowConfirm(false);
+      navigate("/admin-aum/detail", { replace: true });
+    } else {
+      alert("Gagal menyimpan data");
+    }
+  }}
+  className="flex-1 bg-[#409144] text-white py-2.5 rounded-lg font-semibold hover:opacity-90"
+>
+  Ya, Ajukan
+</button>
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+ <div
+  className="px-4 py-3 rounded-t-lg mb-4 font-medium text-white"
+  style={{
+    background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)",
+  }}
+>
+  Informasi Umum
+</div>
+
+
       <div className="bg-white rounded-b-lg p-8 flex flex-col gap-8 shadow-sm mb">
-        {/* LOGO SECTION */}
-        <div className="flex gap-6 items-center">
-          <div className="w-24 h-24 rounded-full bg-[#F2F4F8] flex items-center justify-center overflow-hidden border">
-            {logoPreview ? (
-              <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
-            ) : (
-              <img src={userIcon} alt="Default" className="w-12 h-12 opacity-30" />
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => fileRef.current.click()}
-              className="border border-blue-600 text-blue-600 px-5 py-2 text-sm rounded hover:bg-blue-50 transition-colors"
-            >
-              Upload Photo
-            </button>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={handleLogoUpload} />
-          </div>
-        </div>
+       {/* LOGO SECTION */}
+<div className="flex items-center gap-8">
+  {/* FOTO */}
+  <div className="flex items-center gap-6">
+    <div className="w-24 h-24 rounded-full bg-[#F2F4F8] flex items-center justify-center overflow-hidden border">
+      {logoPreview ? (
+        <img
+          src={logoPreview}
+          alt="Logo"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <img
+          src={userIcon}
+          alt="Default"
+          className="w-12 h-12 opacity-30"
+        />
+      )}
+    </div>
+
+    <div className="flex flex-col gap-1">
+      <button
+        type="button"
+        onClick={() => fileRef.current.click()}
+        className="border border-blue-600 text-blue-600 px-5 py-2 text-sm rounded hover:bg-blue-50 transition-colors"
+      >
+        Unggah Foto
+      </button>
+
+      <button
+        type="button"
+        className="text-sm text-red-500 hover:underline text-center pt-2"
+        onClick={() =>
+          setFormData((prev) => ({ ...prev, logo: null }))
+        }
+      >
+        Hapus
+      </button>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleLogoUpload}
+      />
+    </div>
+  </div>
+
+  {/* GARIS PEMBATAS */}
+  <div className="h-20 w-px bg-gray-300" />
+
+  {/* KETERANGAN */}
+  <div className="text-sm text-gray-500 leading-relaxed">
+    <p className="font-medium text-gray-700">Logo Perusahaan</p>
+    <p>1. Min. 400 x 400px</p>
+    <p>2. Max. 2MB</p>
+    <p>3. Your face or company logo</p>
+  </div>
+</div>
 
         {/* FORM SECTION */}
         <div className="grid md:grid-cols-2 gap-6">
@@ -253,16 +372,26 @@ if (formData.logo instanceof File) {
         </label>
 
         <div className="flex justify-end pt-2">
-          <button
-            type="button"
-            onClick={onInternalSubmit}
-            disabled={!agree}
-            className={`px-8 py-2.5 rounded text-sm font-semibold transition-all ${
-              agree ? "bg-blue-600 text-white hover:bg-blue-700 active:scale-95" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            Simpan Dokumen
-          </button>
+<button
+  type="button"
+  onClick={() => {
+    if (!formData.company_name || !formData.company_email || !formData.company_phone) {
+      alert("Nama perusahaan, email, dan nomor telepon wajib diisi!");
+      return;
+    }
+    setShowConfirm(true);
+  }}
+  disabled={!agree}
+  className={`px-8 py-2.5 rounded text-sm font-semibold transition-all duration-200
+    ${agree
+      ? "bg-[#409144] text-white hover:opacity-90 active:scale-95"
+      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }`}
+>
+  Simpan Dokumen
+</button>
+
+
         </div>
       </div>
     </>

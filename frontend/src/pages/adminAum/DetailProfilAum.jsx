@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import AdminAumLayout from "../../components/layout/AdminAumLayout";
 
 // ICONS
@@ -8,7 +8,6 @@ import checkIcon from "../../assets/icons/ProfilAum/check.svg";
 import userIcon from "../../assets/icons/ProfilAum/user.svg";
 import docTextIcon from "../../assets/icons/ProfilAum/document-text.svg";
 import downloadIcon from "../../assets/icons/ProfilAum/document-download.svg";
-import editIcon from "../../assets/icons/ProfilAum/edit.svg";
 import closeIcon from "../../assets/icons/iconClose.svg";
 
 const DetailProfilAum = () => {
@@ -16,193 +15,102 @@ const DetailProfilAum = () => {
  const [company, setCompany] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [alertVisible, setAlertVisible] = useState(true);
 
-    useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/admin-aum/company/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [previewLogo, setPreviewLogo] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
 
-        console.log("Backend response:", response.data); 
 
-        if (response.data.company) {
-          setCompany(response.data.company);
-          setDocuments(response.data.data || []);
-        } else {
-          // Jika belum ada perusahaan, redirect ke ProfilAum untuk input
-          // navigate("/admin-aum/profil");
-        }
-      } catch (error) {
-        console.error("Error checking profile:", error);
-      } finally {
-        setLoading(false);
+
+const handleLogoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setLogoFile(file); // 🔥 PENTING
+    setPreviewLogo(URL.createObjectURL(file));
+  }
+};
+
+
+
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+const handleSave = async () => {
+  try {
+    const payload = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        payload.append(key, value);
       }
-    };
+    });
 
-    fetchProfile();
-  }, [navigate]);
+    if (logoFile) {
+      payload.append("logo", logoFile);
+    }
+
+    const res = await axios.put(
+      "http://localhost:5000/api/admin-aum/company/edit-profile",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+
+    setCompany(res.data.company); // ambil hasil backend
+    setPreviewLogo(res.data.company.logo_url);
+    setShowEditModal(false);
+
+  } catch (error) {
+    console.error("Gagal update profil:", error);
+  }
+};
+
+
+
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/admin-aum/company/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      if (response.data.company) {
+        setCompany(response.data.company);
+        setDocuments(response.data.documents || []);
+        setPreviewLogo(response.data.company.logo_url || null);
+      }
+    } catch (error) {
+      console.error("Error checking profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
 
   if (loading) return <p className="text-center py-6">Loading...</p>;
   if (!company) return null; 
 
   return (
-//     <AdminAumLayout>
-//       <div className="w-full flex justify-center px-4 py-6">
-//         <div className="w-full max-w-1124px flex flex-col gap-4">
-
-//           {/* HEADER */}
-//           <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">
-//             Profil & Legalitas AUM
-//           </div>
-
-//           {/* ALERT */}
-//           <div className="relative bg-green-50 border-l-4 border-green-500 rounded-md p-4 flex justify-between">
-//             <div className="flex gap-3">
-//               <img src={checkIcon} className="w-6 h-6 mt-1" alt="check" />
-//               <div>
-//                 <p className="font-bold">Profil Anda Sudah Lengkap</p>
-//                 <p className="text-sm text-gray-600">
-//                   Anda dapat menggunakan seluruh fitur rekrutmen kami.
-//                 </p>
-//                 <button className="mt-3 px-4 py-1.5 border border-blue-600 text-blue-600 rounded text-sm font-semibold hover:bg-blue-50">
-//                   Lihat Riwayat Verifikasi
-//                 </button>
-//               </div>
-//             </div>
-//             <img src={closeIcon} className="w-4 h-4 cursor-pointer" alt="close" />
-//           </div>
-
-//           {/* PROFIL AUM */}
-//           <div className="bg-white p-4 rounded-md shadow-sm flex items-center gap-6">
-//             <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
-//               <img src={userIcon} className="w-6 h-6" alt="user" />
-//             </div>
-
-//             {/* GARIS VERTIKAL (SESUAI DASHBOARD) */}
-//             <div className="h-10 w-px bg-gray-300"></div>
-
-//             <div className="flex-1">
-//               <p className="font-bold">PT. SURYA MEDIA UTAMA</p>
-//               <p className="text-sm text-gray-600">
-//                 Pengembang Software & Edukasi Digital
-//               </p>
-//             </div>
-
-//             <div className="flex items-center gap-2 border border-blue-600 text-blue-600 px-3 py-1.5 rounded text-sm font-semibold">
-//               <img src={checkIcon} className="w-4 h-4" alt="verified" />
-//               Terverifikasi
-//             </div>
-//           </div>
-
-//           {/* INFORMASI UMUM */}
-//           <div className="bg-[#A2A9B0] text-black px-4 py-3 rounded-t-md font-medium">
-//             Informasi Umum
-//           </div>
-
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {/* CARD KIRI */}
-//             <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-//               <Row label="Email Perusahaan" value="hrd@suryabadi.com" />
-//               <Row label="No Telepon" value="0274 512345" />
-//               <Row label="Website Resmi" value="https://suryabadi.co.id" />
-//             </div>
-
-//             {/* CARD KANAN */}
-//             <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-//               <Row label="Email Perusahaan" value="hrd@suryabadi.com" />
-//               <Row label="No Telepon" value="0274 512345" />
-//               <Row label="Website Resmi" value="https://suryabadi.co.id" />
-//             </div>
-//           </div>
-
-//           {/* DESKRIPSI & ALAMAT */}
-//           <div className="bg-white rounded-md divide-y divide-gray-200 text-sm shadow-sm">
-//             <div className="p-4">
-//               <p className="text-gray-500 mb-1">Deskripsi Perusahaan</p>
-//               <p>
-//                 Perusahaan pengembang software untuk mendukung kemajuan Amal Usaha.
-//               </p>
-//             </div>
-//             <div className="p-4">
-//               <p className="text-gray-500 mb-1">Alamat Kantor Pusat</p>
-//               <p>
-//                 Jl. Kapas No. 9, Semaki, Kec. Umbulharjo, Kota Yogyakarta
-//               </p>
-//             </div>
-//           </div>
-
-//           {/* DOKUMEN LEGALITAS */}
-//           <div className="bg-[#A2A9B0] text-black px-4 py-3 rounded-t-md font-medium">
-//             Dokumen Legalitas
-//           </div>
-
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {/* SK & NPWP */}
-//             <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-//               <Row label="No. SK Pendirian" value="123/SK/PP/2024" />
-//               <Row label="No. NPWP Instansi" value="00.000.000.0-000.000" />
-//             </div>
-
-//             {/* AD/ART & KAIDAH */}
-//   {/* AD/ART & KAIDAH */}
-// <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-//   {["Dokumen AD/ART", "Kaidah Pimpinan Pusat"].map((doc, i) => (
-//     <div key={i} className="p-4 flex justify-between items-center">
-      
-//       {/* LABEL */}
-//       <div className="flex items-center gap-2">
-//         <img src={docTextIcon} className="w-4 h-4" alt="doc" />
-//         <span className="font-medium">{doc}</span>
-//       </div>
-
-//       {/* ACTION */}
-//       <div className="flex gap-2">
-//         {/* LIHAT FILE */}
-//         <button
-//           type="button"
-//           className="flex items-center gap-1 border border-blue-600 text-blue-600 px-3 py-1 rounded text-xs hover:bg-blue-50 transition"
-//         >
-//           <img src={docTextIcon} className="w-5 h-5" />
-//           Lihat File
-//         </button>
-
-//         {/* UNDUH */}
-//         <button
-//           type="button"
-//           className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition"
-//         >
-//           <img src={downloadIcon} className="w-4 h-4" />
-//           Unduh
-//         </button>
-//       </div>
-
-//     </div>
-//   ))}
-// </div>
-
-//           </div>
-
-//           {/* EDIT BUTTON */}
-//           <div className="bg-white rounded-md p-4 flex justify-end shadow-sm">
-//             <button
-//               onClick={() => navigate("/admin-aum/profil/edit")}
-//               className="flex items-center gap-2 border border-blue-600 text-blue-600 px-5 py-2 rounded font-semibold hover:bg-blue-600 hover:text-white transition"
-//             >
-//               <img src={editIcon} className="w-4 h-4" />
-//               Edit / Update
-//             </button>
-//           </div>
-
-//         </div>
-//       </div>
-//     </AdminAumLayout>
-
     <AdminAumLayout>
       <div className="w-full flex justify-center px-4 py-6">
         <div className="w-full max-w-1124px flex flex-col gap-4">
@@ -211,134 +119,345 @@ const DetailProfilAum = () => {
           <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">
             Profil & Legalitas AUM
           </div>
+          
+{showEditModal && (
+  <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
+    
+    {/* MODAL */}
+    <div className="
+      bg-white w-full max-w-2xl
+      max-h-[90vh]
+      rounded-xl shadow-lg
+      grid grid-rows-[auto_1fr_auto]
+      overflow-hidden
+    ">
 
-          {/* ALERT */}
-          <div className="relative bg-green-50 border-l-4 border-green-500 rounded-md p-4 flex justify-between">
-            <div className="flex gap-3">
-              <img src={checkIcon} className="w-6 h-6 mt-1" alt="check" />
-              <div>
-                <p className="font-bold">Profil Anda Sudah Lengkap</p>
-                <p className="text-sm text-gray-600">
-                  Anda dapat menggunakan seluruh fitur rekrutmen kami.
-                </p>
-              </div>
-            </div>
-            <img src={closeIcon} className="w-4 h-4 cursor-pointer" alt="close" />
-          </div>
+      {/* ================= HEADER ================= */}
+      <div
+        className="px-5 py-3 text-white font-semibold
+                   flex justify-between items-center"
+        style={{ background: "linear-gradient(90deg, #004F8F, #009B49)" }}
+      >
+        Edit Profile
+        <img
+          src={closeIcon}
+          className="w-4 h-4 cursor-pointer filter invert"
+          onClick={() => setShowEditModal(false)}
+          alt="close"
+        />
+      </div>
 
-          {/* PROFIL AUM */}
-          <div className="bg-white p-4 rounded-md shadow-sm flex items-center gap-6">
-            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
-              {company.logo_url ? (
+      {/* ================= BODY (SCROLLABLE) ================= */}
+      <div className="overflow-y-auto">
+
+        {/* FOTO PROFIL */}
+        <div className="px-6 pt-6">
+          <div className="flex items-center gap-4">
+            
+            <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+              {previewLogo ? (
                 <img
-                  src={company.logo_url}
-                  className="w-full h-full object-cover rounded-full"
-                  alt="Logo Perusahaan"
+                  src={previewLogo}
+                  className="w-full h-full object-cover"
+                  alt="preview"
                 />
               ) : (
-                <img src={userIcon} className="w-6 h-6" alt="user" />
+                <img src={userIcon} className="w-8 h-8 opacity-60" />
               )}
             </div>
 
-            <div className="h-10 w-px bg-gray-300"></div>
-
-            <div className="flex-1">
-              <p className="font-bold">{company.company_name}</p>
-              <p className="text-sm text-gray-600">{company.description}</p>
-            </div>
-
-            <div className="flex items-center gap-2 border border-blue-600 text-blue-600 px-3 py-1.5 rounded text-sm font-semibold">
-              <img src={checkIcon} className="w-4 h-4" alt="verified" />
-              Terverifikasi
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Foto Profil</p>
+              <label className="
+                inline-flex items-center gap-2
+                px-3 py-1.5 border border-gray-300 rounded
+                cursor-pointer text-sm hover:bg-gray-50 transition
+              ">
+                Edit Foto
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
+                  className="hidden"
+                />
+              </label>
+              <p className="text-[11px] text-gray-400 mt-1">
+                PNG / JPG · max 2MB
+              </p>
             </div>
           </div>
+        </div>
+
+        {/* FORM */}
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <Input label="Nama Perusahaan" name="company_name" value={formData.company_name} onChange={handleChange} />
+          <Input label="No Telepon" name="company_phone" value={formData.company_phone} onChange={handleChange} />
+          <Input label="Email" name="company_email" value={formData.company_email} onChange={handleChange} />
+          <Input label="Website" name="company_url" value={formData.company_url} onChange={handleChange} />
+          <Input label="Provinsi" name="province" value={formData.province} onChange={handleChange} />
+          <Input label="Kota / Kabupaten" name="city" value={formData.city} onChange={handleChange} />
+          <Input label="Bidang Industri" name="industry" value={formData.industry} onChange={handleChange} />
+          <Input label="Jumlah Karyawan" name="employee_range" value={formData.employee_range} onChange={handleChange} />
+
+          <div className="md:col-span-2">
+            <label className="text-gray-500 text-xs">Deskripsi</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full border border-gray-300 rounded px-3 py-2
+                         focus:outline-none focus:ring-1 focus:ring-gray-400"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="text-gray-500 text-xs">Alamat</label>
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              rows={2}
+              className="w-full border border-gray-300 rounded px-3 py-2
+                         focus:outline-none focus:ring-1 focus:ring-gray-400"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ================= FOOTER ================= */}
+      <div className="px-6 pb-4 bg-white">
+        <div className="border-t border-gray-200/70 my-4"></div>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setShowEditModal(false)}
+            className="px-4 py-2 border border-gray-300 rounded text-sm
+                       hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-[#409144] text-white rounded
+                       text-sm font-semibold hover:bg-[#367a3a] transition"
+          >
+            Simpan
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+
+{alertVisible && (
+  <div className="relative bg-green-50 border-l-4 border-green-500 rounded-md p-4 flex justify-between">
+    <div className="flex gap-3">
+      <img src={checkIcon} className="w-6 h-6 mt-1" alt="check" />
+      <div>
+        <p className="font-bold">Profil Anda Sudah Lengkap</p>
+        <p className="text-sm text-gray-600">
+          Anda dapat menggunakan seluruh fitur rekrutmen kami.
+        </p>
+      </div>
+    </div>
+    <img
+      src={closeIcon}
+      className="w-4 h-4 cursor-pointer"
+      alt="close"
+      onClick={() => setAlertVisible(false)}
+    />
+  </div>
+)}
+
+
+{/* PROFIL AUM */}
+<div
+  className="flex  rounded-t-2xl overflow-hidden shadow-sm"
+  style={{
+    background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)",
+  }}
+>
+  {/* BAGIAN KIRI: PROFIL */}
+  <div className="flex items-center p-4 flex-[0.6] text-white gap-4">
+    {/* Logo */}
+    <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mr-6">
+      {company.logo_url ? (
+        <img
+          src={company.logo_url}
+          className="w-full h-full object-cover rounded-full"
+          alt="Logo Perusahaan"
+        />
+      ) : (
+        <img src={userIcon} className="w-10 h-10" alt="user" />
+      )}
+    </div>
+
+    {/* GARIS VERTIKAL SEBELAH KANAN LOGO */}
+    <div className="w-px bg-white h-20 mr-6"></div>
+
+    {/* NAMA & DESKRIPSI */}
+    <div>
+      <p className="font-bold text-lg">{company.company_name}</p>
+      <p className="text-sm">{company.description}</p>
+    </div>
+  </div>
+
+  {/* BAGIAN KANAN: STATUS TERVERIFIKASI */}
+  <div className="flex items-center justify-end p-4 flex-[0.4]">
+    <div className="flex items-center gap-2 border border-white px-3 py-1.5 rounded text-white text-sm font-semibold">
+      {/* ICON CEKLIS PUTIH */}
+      <img src={checkIcon} className="w-4 h-4 filter brightness-0 invert" alt="verified" />
+      Terverifikasi
+    </div>
+  </div>
+</div>
 
           {/* INFORMASI UMUM */}
-          <div className="bg-[#A2A9B0] text-black px-4 py-3 rounded-t-md font-medium">
-            Informasi Umum
+<div
+  className="px-4 py-3 rounded-t-md font-medium text-white"
+  style={{
+    background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)",
+  }}
+>
+  Informasi Umum
+</div>
+
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {/* CARD KIRI */}
+  <div className="bg-white rounded-md shadow-sm divide-y divide-gray-200 text-sm">
+    <Row label="Nama Perusahaan" value={company.company_name} />
+    <Row label="No Telepon" value={company.company_phone} />
+    <Row label="Provinsi" value={company.province} />
+    <Row label="Bidang Industri" value={company.industry} />
+  </div>
+
+  {/* CARD KANAN */}
+  <div className="bg-white rounded-md shadow-sm divide-y divide-gray-200 text-sm">
+    <Row label="Email Perusahaan" value={company.company_email} />
+    <Row label="Website Resmi" value={company.company_url} />
+    <Row label="Kota / Kabupaten" value={company.city} />
+    <Row label="Jumlah Karyawan" value={company.employee_range} />
+  </div>
+</div>
+
+{/* DESKRIPSI & ALAMAT */}
+<div className="bg-white rounded-md shadow-sm divide-y divide-gray-200 text-sm mt-4">
+  <div className="p-4">
+    <p className="text-gray-500 mb-1 font-semibold">Deskripsi Perusahaan</p>
+    <p>{company.description}</p>
+  </div>
+  <div className="p-4">
+    <p className="text-gray-500 mb-1 font-semibold">Alamat Lengkap</p>
+    <p>{company.address}, {company.city}, {company.province}</p>
+  </div>
+</div>
+
+{/* DOKUMEN LEGALITAS */}
+<div
+  className="px-4 py-3 rounded-t-md font-medium text-white"
+  style={{
+    background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)",
+  }}
+>
+  Dokumen Legalitas
+</div>
+
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {Array.isArray(documents) && documents.length > 0 ? (
+    documents.map((doc, i) => (
+      <div
+        key={i}
+        className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm"
+      >
+        <div className="p-4 flex justify-between items-center">
+          {/* Nama Dokumen */}
+          <div className="flex items-center gap-2">
+            <img src={docTextIcon} className="w-4 h-4" alt="doc" />
+            <span className="font-medium">{doc.document_name}</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* CARD KIRI */}
-            <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-              <Row label="Email Perusahaan" value={company.company_email} />
-              <Row label="No Telepon" value={company.company_phone} />
-              <Row label="Website Resmi" value={company.company_url} />
-              <Row label="Industri" value={company.industry} />
-              <Row label="Jumlah Karyawan" value={company.employee_range} />
-            </div>
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            {/* Lihat File di browser */}
+            <a
+              href={doc.document_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                flex items-center gap-1
+                px-3 py-1 rounded text-xs
+                border border-green-600
+                text-green-600
+                bg-white
+                hover:bg-green-600
+                hover:text-white
+                transition
+              "
+            >
+              <img src={docTextIcon} className="w-5 h-5" />
+              Lihat File
+            </a>
 
-            {/* CARD KANAN */}
-            <div className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm">
-              <Row label="Provinsi" value={company.province} />
-              <Row label="Kota / Kabupaten" value={company.city} />
-              <Row label="Alamat" value={company.address} />
-            </div>
+            {/* Unduh File sebagai PDF */}
+            <a
+              href={doc.document_url}
+              download={`${doc.document_name}.pdf`}
+              className="
+                flex items-center gap-1
+                px-3 py-1 rounded text-xs
+                border border-green-600
+                text-white
+                bg-green-600
+                hover:bg-white
+                hover:text-green-600
+                transition
+              "
+            >
+              <img src={downloadIcon} className="w-4 h-4" />
+              Unduh
+            </a>
           </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-center py-4 col-span-2 text-gray-500">
+      Belum ada dokumen yang diunggah
+    </p>
+  )}
+</div>
 
-          {/* DESKRIPSI & ALAMAT */}
-          <div className="bg-white rounded-md divide-y divide-gray-200 text-sm shadow-sm">
-            <div className="p-4">
-              <p className="text-gray-500 mb-1">Deskripsi Perusahaan</p>
-              <p>{company.description}</p>
-            </div>
-          </div>
-
-          {/* DOKUMEN LEGALITAS */}
-          <div className="bg-[#A2A9B0] text-black px-4 py-3 rounded-t-md font-medium">
-            Dokumen Legalitas
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {documents.length ? (
-              documents.map((doc, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-b-md divide-y divide-gray-200 text-sm shadow-sm"
-                >
-                  <div className="p-4 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <img src={docTextIcon} className="w-4 h-4" alt="doc" />
-                      <span className="font-medium">{doc.name}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <a
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 border border-blue-600 text-blue-600 px-3 py-1 rounded text-xs hover:bg-blue-50 transition"
-                      >
-                        <img src={docTextIcon} className="w-5 h-5" />
-                        Lihat File
-                      </a>
-                      <a
-                        href={doc.file_url}
-                        download
-                        className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition"
-                      >
-                        <img src={downloadIcon} className="w-4 h-4" />
-                        Unduh
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center py-4 col-span-2 text-gray-500">
-                Belum ada dokumen yang diunggah
-              </p>
-            )}
-          </div>
 
           {/* EDIT BUTTON */}
           <div className="bg-white rounded-md p-4 flex justify-end shadow-sm">
-            <button
-              onClick={() => navigate("/admin-aum/profil/edit")}
-              className="flex items-center gap-2 border border-blue-600 text-blue-600 px-5 py-2 rounded font-semibold hover:bg-blue-600 hover:text-white transition"
-            >
-              <img src={editIcon} className="w-4 h-4" />
-              Edit / Update
-            </button>
+<button
+  onClick={() => {
+    setFormData({
+      company_name: company.company_name,
+      company_phone: company.company_phone,
+      company_email: company.company_email,
+      company_url: company.company_url,
+      province: company.province,
+      city: company.city,
+      industry: company.industry,
+      employee_range: company.employee_range,
+      description: company.description,
+      address: company.address,
+    });
+    setShowEditModal(true);
+  }}
+  className="flex items-center gap-2 border border-[#409144] text-[#409144] px-5 py-2 rounded font-semibold hover:bg-[#409144] hover:text-white transition"
+>
+  Edit / Update
+</button>
+
           </div>
         </div>
       </div>
@@ -351,6 +470,31 @@ const Row = ({ label, value }) => (
   <div className="flex px-4 py-3">
     <span className="w-56 text-gray-500">{label}</span>
     <span className="font-medium break-all">{value}</span>
+  </div>
+);
+const Input = ({ label, name, value, onChange }) => (
+  <div>
+    <label className="text-gray-500 text-xs">{label}</label>
+    <input
+    id={name}
+      type="text"
+      name={name}
+      value={value || ""}
+      onChange={onChange}
+      className="
+          w-full
+          rounded
+          px-3
+          py-2
+          text-sm
+          border
+          border-gray-300
+          focus:outline-none
+          focus:border-gray-400
+          focus:ring-1
+          focus:ring-gray-400
+        "
+    />
   </div>
 );
 

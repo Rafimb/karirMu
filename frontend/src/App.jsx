@@ -22,6 +22,15 @@ import DetailProfilAum from "./pages/adminAum/DetailProfilAum";
 
 import DataAum from "./components/adminAum/DataAum";
 import DokumenAum from "./components/adminAum/DokumenAum";
+import BuatLowongan from "./pages/adminAum/BuatLowongan";
+import ManajemenLowongan from "./pages/adminAum/ManajemenLowongan";
+import DetailLowongan from "./pages/adminAum/DetailLowongan";
+import ManajemenPelamar from "./pages/adminAum/ManajemenPelamar";
+import LihatPelamar from "./pages/adminAum/LihatPelamar";
+import ReviewPelamar from "./pages/adminAum/ReviewPelamar";
+
+
+
 
 // Pelamar
 import DashboardPelamar from "./pages/pelamar/DashboardPelamar";
@@ -54,7 +63,15 @@ function App() {
           <Route path="/admin-aum/profil" element={<ProfilAum />} />
           <Route path="/admin-aum/detail" element={<DetailProfilAum />} />
           <Route path="/admin-aum/data" element={<DataAum />} />
-          <Route path="/admin-aum/dokumen" element={<DokumenAum/>} />
+          <Route path="/admin-aum/dokumen" element={<DokumenAum />} />
+          <Route path="/admin-aum/buat-lowongan" element={<BuatLowongan />} />
+          <Route path="/admin-aum/manajemen-lowongan" element={<ManajemenLowongan />} />
+          <Route path="/admin-aum/detail-lowongan" element={<DetailLowongan />} />
+          <Route path="/admin-aum/manajemen-pelamar" element={<ManajemenPelamar />} />
+          <Route path="/admin-aum/lihat-pelamar" element={<LihatPelamar />} />
+          <Route path="/admin-aum/review-pelamar" element={<ReviewPelamar />} />
+
+          
         </Route>
 
         {/* PELAMAR */}

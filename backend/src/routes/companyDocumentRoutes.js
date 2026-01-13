@@ -9,13 +9,8 @@ const {
     getDocumentsByCompany,
     createCompanyProfileWithDocuments,
     validateDocument,
+    updateCompanyProfile
 } = require("../controllers/companyController");
-
-// Definisi upload untuk beberapa field (Logo & Documents)
-const companyUploadFields = upload.fields([
-  { name: 'logo', maxCount: 1 },
-  { name: 'documents', maxCount: 10 }
-]);
 
 router.post(
   "/company/submit",
@@ -28,6 +23,15 @@ router.post(
   createCompanyProfileWithDocuments
 );
 
+router.put(
+  "/company/edit-profile",
+  authMiddleware,
+  companyMiddleware,
+  upload.single("logo"),
+  updateCompanyProfile
+);  
+
+
 // router.post(
 //   "/company/submit",
 //   authMiddleware,
@@ -37,8 +41,7 @@ router.post(
 // );
 
 // Sisa rute lainnya...
-router.post("/uploads", authMiddleware, upload.array("documents", 4), createCompanyDocument);
-router.post("/profile", authMiddleware, upload.single("logo"), createCompanyProfile); // Tambahkan "/" di depan "profile"
+ // Tambahkan "/" di depan "profile"
 
 router.get("/company/profile", authMiddleware, companyMiddleware, getDocumentsByCompany);
 

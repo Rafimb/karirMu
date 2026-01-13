@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import RegisterImage from "../assets/img/login1.png";
+import RegisterImage from "../assets/img/login2.png";
 import EyeIcon from "../assets/icons/eye.svg";
 import EyeSlashIcon from "../assets/icons/eye-slash.svg";
 
@@ -85,8 +85,8 @@ const SetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#C1C7CD] flex items-center justify-center px-6 md:px-16">
-      <div className="flex flex-col md:flex-row w-full max-w-360 bg-white rounded-lg overflow-hidden shadow-lg">
+  <div className="min-h-screen bg-[#C1C7CD] flex items-center justify-center px-20 md:px-20">
+    <div className="flex flex-col md:flex-row w-full max-w-360 bg-white rounded-[48px] overflow-hidden shadow-lg">
 
         {/* IMAGE */}
         <div className="hidden md:block md:w-150 bg-[#2e2d2d] rounded-tr-[70px] rounded-br-[70px] overflow-hidden">
@@ -161,13 +161,16 @@ const SetPassword = () => {
             </div>
 
             {/* BUTTON */}
-            <button
-              type="submit"
+                        <button
               disabled={loading}
-              className="mt-2 w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+              style={{
+                background: "linear-gradient(90deg, #004F8F 0%, #009B49 100%)",
+              }}
+              className="mt-2 w-full text-white py-3 rounded font-semibold hover:opacity-90 transition"
             >
               {loading ? "Menyimpan..." : "Simpan Password"}
             </button>
+            <div className="my-4 border-t border-gray-300"></div>
           </form>
         </div>
       </div>

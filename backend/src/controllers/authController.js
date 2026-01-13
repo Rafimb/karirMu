@@ -1,58 +1,61 @@
 const crypto = require("crypto");
-const {sendTokenActivation} = require("../config/mailer")
-const {client} = require("../config/database");
-const bcrypt = require("bcrypt")
-const {generateToken} = require("../config/jwt")
+const bcrypt = require("bcrypt");
+const { ObjectId } = require("mongodb");
 
+const { client } = require("../config/database");
+const { sendTokenActivation } = require("../config/mailer");
+const { generateToken } = require("../config/jwt");
 
-const users = client.db("karirMu").collection("users")
-const companyHrd = client.db("karirMu").collection("company_hrd");
-
+// ================= COLLECTIONS =================
+const users = client.db("karirMu").collection("users");
+const companyHrd = client.db("karirMu").collection("company_hrd");  
 
 exports.register = async (req, res) => {
   try {
     const { email, register_as } = req.body;
 
     if (!email || !register_as) {
-      return res.status(400).json({ message: "Email dan role wajib diisi" });
+      return res.status(400).json({
+        message: "Email dan role wajib diisi",
+      });
     }
 
     if (!["pelamar", "company_hrd"].includes(register_as)) {
-      return res.status(400).json({ message: "Role tidak valid" });
+      return res.status(400).json({
+        message: "Role tidak valid",
+      });
     }
 
     const existingUser = await users.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "Email sudah terdaftar" });
+      return res.status(409).json({
+        message: "Email sudah terdaftar",
+      });
     }
 
     const token = crypto.randomBytes(32).toString("hex");
 
-    const newUser = {
-      user_id: crypto.randomUUID(),
+    const result = await users.insertOne({
       email,
-      role: register_as, // 🔥 SIMPAN ROLE
+      role: register_as,
       full_name: null,
       password: null,
       token,
       is_active: false,
       created_at: new Date(),
-    };
+    });
 
-    await users.insertOne(newUser);
+    const userId = result.insertedId;
 
     if (register_as === "company_hrd") {
       await companyHrd.insertOne({
-        company_hrd_id: crypto.randomUUID(),
-        user_id: newUser.user_id,
+        user_id: userId, // ObjectId
         company_id: null,
         created_at: new Date(),
       });
     }
 
-    const activationLink =
-      `http://localhost:5173/auth/activate?token=${token}`;
-
+    const activationLink = `http://localhost:5173/auth/activate?token=${token}`;
     await sendTokenActivation(email, activationLink);
 
     return res.status(201).json({
@@ -60,52 +63,49 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
-
-
 exports.activateAccount = async (req, res) => {
-  const { token } = req.body;
+  try {
+    const { token } = req.body;
 
-  console.log("BODY:", req.body);
-console.log("HEADERS:", req.headers["content-type"]);
-
-
-  if (!token) {
-    return res.status(400).json({ message: "Token wajib dikirim" });
-  }
-    const user = await users.findOne({ token });
-
-
-  if (!user) {
-    return res.status(400).json({ message: "Token tidak valid" });
-  }
-
-  await users.updateOne(
-    { _id: user._id},
-    {
-      $set: {
-        is_active: true,
-      }
+    if (!token) {
+      return res.status(400).json({
+        message: "Token wajib dikirim",
+      });
     }
-  );
 
-  res.json({
-    message: "Akun aktif. Silakan login",
-  });
+    const user = await users.findOne({ token });
+    if (!user) {
+      return res.status(400).json({
+        message: "Token tidak valid",
+      });
+    }
+
+    await users.updateOne(
+      { _id: user._id },
+      {
+        $set: { is_active: true },
+      }
+    );
+
+    return res.json({
+      message: "Akun berhasil diaktivasi, silakan login",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
 
 exports.setPassword = async (req, res) => {
   try {
-    const {token, full_name, password } = req.body;
+    const { token, full_name, password } = req.body;
 
-    const user = await users.findOne({ token });
-
-    // 1. Validasi input
-    if (!full_name || !password) {
+    if (!token || !full_name || !password) {
       return res.status(400).json({
-        message: "nama lengkap, dan password wajib diisi",
+        message: "Token, nama lengkap, dan password wajib diisi",
       });
     }
 
@@ -115,6 +115,7 @@ exports.setPassword = async (req, res) => {
       });
     }
 
+    const user = await users.findOne({ token });
     if (!user) {
       return res.status(400).json({
         message: "Token tidak valid atau sudah kedaluwarsa",
@@ -133,10 +134,8 @@ exports.setPassword = async (req, res) => {
       });
     }
 
-    // 3. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4. Update user
     await users.updateOne(
       { _id: user._id },
       {
@@ -144,103 +143,88 @@ exports.setPassword = async (req, res) => {
           full_name,
           password: hashedPassword,
         },
-         $unset: {
-        token: "",
-        }
+        $unset: {
+          token: "",
+        },
       }
     );
 
-    // 5. Generate JWT (AUTO LOGIN)
     const accessToken = generateToken({
-      userId: user.user_id,
+      userId: user._id.toString(),
+      role: user.role,
       email: user.email,
     });
 
     return res.status(200).json({
       message: "Password berhasil dibuat",
       accessToken,
+      role: user.role,
       user: {
+        id: user._id,
         full_name,
         email: user.email,
       },
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Server error",
-    });
+    return res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Validasi input
     if (!email || !password) {
       return res.status(400).json({
         message: "Email dan password wajib diisi",
       });
     }
 
-    // 2. Cari user
     const user = await users.findOne({ email });
-
     if (!user) {
       return res.status(401).json({
         message: "Email atau password salah",
       });
     }
 
-    // 3. Cek aktivasi akun
     if (!user.is_active) {
       return res.status(403).json({
         message: "Akun belum diaktivasi",
       });
     }
 
-    // 4. Cek apakah password sudah dibuat
     if (!user.password) {
       return res.status(403).json({
         message: "Password belum dibuat",
       });
     }
 
-    // 5. Validasi password
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(401).json({
         message: "Email atau password salah",
       });
     }
 
-    // 🔥 ROLE LANGSUNG DARI USERS
-    const role = user.role;
-
-    // 6. Generate JWT
     const accessToken = generateToken({
-      userId: user.user_id,
-      role,
+      userId: user._id.toString(),
+      role: user.role,
       email: user.email,
     });
 
-    // 7. Response sukses
     return res.status(200).json({
       message: "Login berhasil",
       accessToken,
-      role, // 🔥 kirim ke frontend
+      role: user.role,
       user: {
+        id: user._id,
         full_name: user.full_name,
         email: user.email,
-        company_id: user.company_id || null,
       },
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Server error",
-    });
+    return res.status(500).json({ message: "Server error" });
   }
 };
-

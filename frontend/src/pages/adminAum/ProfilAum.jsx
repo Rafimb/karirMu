@@ -29,46 +29,48 @@ const ProfilAum = () => {
 
   const role = localStorage.getItem("role");
 
-    useEffect(() => {
+useEffect(() => {
+  const checkRoleAndProfile = async () => {
+    if (role !== "company_hrd") {
+      alert("Anda tidak memiliki akses ke halaman ini.");
+      navigate("/auth/login", { replace: true });
+      return;
+    }
 
-      if (role !== "company_hrd") {
-        alert("Anda tidak memiliki akses ke halaman ini.");
-        navigate("/auth/login");
-        return;
-      }
-
-    const checkProfile = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/admin-aum/company/profile", {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/admin-aum/company/profile",
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-        });
-
-        const company = res.data.company;
-
-
-
-        if (company && company._id) {
-          // Jika profil sudah ada, redirect ke DetailProfilAum
-          navigate("/admin-aum/detail");
-        } else {
-          setLoading(false); // Profil belum ada → tampilkan form
         }
-      } catch (err) {
-        console.error("Error checking profile:", err);
-        setLoading(false); // tetap tampilkan form jika error
-      }
-    };
+      );
 
-    checkProfile();
-  }, [role, navigate]);
+      const company = res.data.company; // <<< Ganti dari res.data.company
+      console.log("Fetched company:", company);
+
+      if (company?._id) {
+        navigate("/admin-aum/detail");
+        return;
+      }
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setLoading(false);
+    }
+  };
+
+  checkRoleAndProfile();
+}, [navigate, role]);
+
 
   // 2. Handler untuk Submit ke Backend
   const submitHandler = async (formattedData) => {
     try {
       // formattedData di sini adalah objek FormData yang dibuat di DataAum.jsx
-      const response = await axios.post("http://localhost:5000/admin-aum/company/submit", formattedData, {
+      const response = await axios.post("http://localhost:5000/api/admin-aum/company/submit", formattedData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
@@ -78,7 +80,7 @@ const ProfilAum = () => {
       alert("Data berhasil disimpan!");
       console.log("Response:", response.data);
 
-      navigate("/admin-aum/profil/detail", {state: { formData } });
+      navigate("/admin-aum/detail", {state: { formData } });
     } catch (error) {
       const serverMessage = error.response?.data?.message;
       console.error("Backend says:", serverMessage);
@@ -91,8 +93,14 @@ const ProfilAum = () => {
 
   return (
     <AdminAumLayout>
-      <div className="w-full px-4 py-6 flex justify-center">
-        <div className="w-full max-w-1400px">
+      <div className="w-full flex justify-center px-4 py-6">
+        <div className="w-full max-w-1124px flex flex-col gap-4">
+
+          {/* PAGE TITLE */}
+          <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">
+            Profil & Legalitas AUM
+          </div>
+
           <div className="grid grid-cols-1 gap-6">
             
             {/* KIRI — DOKUMEN LEGALITAS */}
@@ -113,7 +121,6 @@ const ProfilAum = () => {
                 setAgree={setAgree}
               />
             </div>
-
           </div>
         </div>
       </div>
