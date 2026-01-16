@@ -6,8 +6,6 @@ import homeIcon from "../../assets/icons/home.svg";
 import profileIcon from "../../assets/icons/document-text.svg";
 import tagsIcon from "../../assets/icons/tags.svg";
 import usersIcon from "../../assets/icons/users.svg";
-import settingIcon from "../../assets/icons/setting-2.svg";
-import vectorIcon from "../../assets/icons/vector.svg";
 import menuIcon from "../../assets/icons/menu.svg";
 import closeIcon from "../../assets/icons/iconClose.svg";
 
@@ -16,7 +14,6 @@ const SidebarAdminAum = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(true);
-  const [openSetting, setOpenSetting] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -35,48 +32,41 @@ const SidebarAdminAum = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-const isActive = (path) => {
-  const currentPath = location.pathname.toLowerCase();
+  /* ===============================
+     ACTIVE MENU HANDLER
+  =============================== */
+  const isActive = (path) => {
+    const currentPath = location.pathname.toLowerCase();
+
+    if (path === "/admin-aum/profil") {
+      return (
+        currentPath === "/admin-aum/profil" ||
+        currentPath.startsWith("/admin-aum/detail-profil")
+      );
+    }
+
+    if (path === "/admin-aum/manajemen-lowongan") {
+      return (
+        currentPath === "/admin-aum/manajemen-lowongan" ||
+        currentPath.startsWith("/admin-aum/detail-lowongan") ||
+        currentPath.startsWith("/admin-aum/buat-lowongan")
+      );
+    }
+
+    if (path === "/admin-aum/manajemen-pelamar") {
+      return (
+        currentPath === "/admin-aum/manajemen-pelamar" ||
+        currentPath.startsWith("/admin-aum/lihat-pelamar") ||
+        currentPath.startsWith("/admin-aum/review-pelamar")
+      );
+    }
+
+    return currentPath === path.toLowerCase();
+  };
 
   /* ===============================
-     PROFIL & DETAIL PROFIL AUM
+     SIDEBAR ITEM
   =============================== */
-  if (path === "/admin-aum/profil") {
-    return (
-      currentPath === "/admin-aum/profil" ||
-      currentPath.startsWith("/admin-aum/detail-profil")
-    );
-  }
-
-  /* ===============================
-     MANAJEMEN LOWONGAN & TURUNANNYA
-  =============================== */
-  if (path === "/admin-aum/manajemen-lowongan") {
-    return (
-      currentPath === "/admin-aum/manajemen-lowongan" ||
-      currentPath.startsWith("/admin-aum/detail-lowongan") ||
-      currentPath.startsWith("/admin-aum/buat-lowongan")
-    );
-  }
-
-  /* ===============================
-     MANAJEMEN PELAMAR & TURUNANNYA
-  =============================== */
-  if (path === "/admin-aum/manajemen-pelamar") {
-    return (
-      currentPath === "/admin-aum/manajemen-pelamar" ||
-      currentPath.startsWith("/admin-aum/lihat-pelamar") ||
-      currentPath.startsWith("/admin-aum/review-pelamar")
-    );
-  }
-
-  /* ===============================
-     MENU LAIN (DASHBOARD, DLL)
-  =============================== */
-  return currentPath === path.toLowerCase();
-};
-
-
   const SidebarItem = ({ icon, text, active, onClick }) => (
     <li
       onClick={() => {
@@ -85,28 +75,27 @@ const isActive = (path) => {
       }}
       className="px-1"
     >
-<div
-  className={`group flex items-center gap-3 h-12 px-3 cursor-pointer rounded-lg transition-all duration-200
-    ${active ? "font-semibold" : ""}
-  `}
-  style={{
-    background: active
-      ? "linear-gradient(90deg, #009B49 0%, #004F8F 100%)"
-      : undefined,
-  }}
-  onMouseEnter={(e) => {
-    if (!active) {
-      e.currentTarget.style.background =
-        "linear-gradient(90deg, #009B49 0%, #004F8F 100%)";
-    }
-  }}
-  onMouseLeave={(e) => {
-    if (!active) {
-      e.currentTarget.style.background = "transparent";
-    }
-  }}
->
-
+      <div
+        className={`group flex items-center gap-3 h-12 px-3 cursor-pointer rounded-lg transition-all duration-200
+          ${active ? "font-semibold" : ""}
+        `}
+        style={{
+          background: active
+            ? "linear-gradient(90deg, #009B49 0%, #004F8F 100%)"
+            : undefined,
+        }}
+        onMouseEnter={(e) => {
+          if (!active) {
+            e.currentTarget.style.background =
+              "linear-gradient(90deg, #009B49 0%, #004F8F 100%)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!active) {
+            e.currentTarget.style.background = "transparent";
+          }
+        }}
+      >
         <img
           src={icon}
           className={`w-5 h-5 transition-all
@@ -162,7 +151,7 @@ const isActive = (path) => {
           >
             <img
               src={open ? closeIcon : menuIcon}
-              className={`transition-all duration-300 -ml-1 ${
+              className={`transition-all duration-300 ${
                 open ? "w-3 h-3" : "w-5 h-5"
               }`}
               alt="toggle"
@@ -171,7 +160,7 @@ const isActive = (path) => {
         </div>
 
         {/* MENU */}
-        <ul className="pt-2 pl-1">
+        <ul className="pt-2 pl-1 space-y-1">
           <SidebarItem
             icon={homeIcon}
             text="Dashboard"
@@ -196,59 +185,9 @@ const isActive = (path) => {
           <SidebarItem
             icon={usersIcon}
             text="Manajemen Pelamar"
-            active={isActive("/admin-aum/Manajemen-Pelamar")}
-            onClick={() => navigate("/admin-aum/Manajemen-Pelamar")}
+            active={isActive("/admin-aum/manajemen-pelamar")}
+            onClick={() => navigate("/admin-aum/manajemen-pelamar")}
           />
-
-          {/* PENGATURAN */}
-          <li
-            onClick={() => setOpenSetting(!openSetting)}
-            className="px-1"
-          >
-            <div className="flex items-center justify-between h-12 px-3 rounded-lg cursor-pointer hover:bg-gray-100 transition">
-              <div className="flex items-center gap-3">
-                <img src={settingIcon} className="w-5 h-5" />
-                {open && <span className="text-sm">Pengaturan</span>}
-              </div>
-
-              {open && (
-                <img
-                  src={vectorIcon}
-                  className={`w-4 h-4 transition-transform duration-300 ${
-                    openSetting ? "rotate-180" : ""
-                  }`}
-                />
-              )}
-            </div>
-          </li>
-
-          {/* SUB MENU */}
-          <div
-            className={`overflow-hidden transition-all duration-300 ${
-              open && openSetting ? "max-h-40" : "max-h-0"
-            }`}
-          >
-            <ul className="ml-10 mt-2 space-y-2">
-              <li
-                onClick={() => navigate("/admin-aum/akun")}
-                className="text-sm cursor-pointer hover:text-blue-600"
-              >
-                Akun
-              </li>
-              <li
-                onClick={() => navigate("/admin-aum/keamanan")}
-                className="text-sm cursor-pointer hover:text-blue-600"
-              >
-                Keamanan
-              </li>
-              <li
-                onClick={() => navigate("/admin-aum/notifikasi")}
-                className="text-sm cursor-pointer hover:text-blue-600"
-              >
-                Notifikasi
-              </li>
-            </ul>
-          </div>
         </ul>
       </aside>
     </>

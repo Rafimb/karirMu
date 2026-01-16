@@ -13,8 +13,10 @@ const LihatPelamar = () => {
         <div className="w-full max-w-1124px flex flex-col gap-4">
 
           {/* PAGE TITLE */}
-          <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">
-            Lihat Pelamar
+              <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm flex items-center gap-2">
+            <span className="text-gray-500">Manajemen Pelamar</span>
+            <span className="text-gray-400">›</span>
+            <span className="font-semibold">Lihat Pelamar</span>
           </div>
 
           {/* ================= RINGKASAN PEKERJAAN ================= */}

@@ -161,9 +161,24 @@ const DashboardAdminAum = () => {
                       </span>
                     </td>
                     <td style={tdStyleCenter}>
-                      <button className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm">
-                        Detail
-                      </button>
+<button
+  className="
+    px-4 py-1.5
+    text-green-600
+    border border-green-600
+    bg-transparent
+    rounded-md
+    text-xs
+    font-medium
+    hover:bg-green-600
+    hover:text-white
+    transition-colors
+    duration-200
+  "
+>
+  Detail
+</button>
+
                     </td>
                   </tr>
                 ))}

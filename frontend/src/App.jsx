@@ -29,11 +29,13 @@ import ManajemenPelamar from "./pages/adminAum/ManajemenPelamar";
 import LihatPelamar from "./pages/adminAum/LihatPelamar";
 import ReviewPelamar from "./pages/adminAum/ReviewPelamar";
 
-
-
-
-// Pelamar
+// PAGES PELAMAR
 import DashboardPelamar from "./pages/pelamar/DashboardPelamar";
+import ProfilPelamar from "./pages/pelamar/ProfilPelamar";
+import CariLowongan from "./pages/pelamar/CariLowongan";
+import RiwayatLamaran from "./pages/pelamar/RiwayatLamaran";
+import LowonganSimpan from "./pages/pelamar/LowonganSimpan";
+
 
 function App() {
   const location = useLocation();
@@ -70,12 +72,15 @@ function App() {
           <Route path="/admin-aum/manajemen-pelamar" element={<ManajemenPelamar />} />
           <Route path="/admin-aum/lihat-pelamar" element={<LihatPelamar />} />
           <Route path="/admin-aum/review-pelamar" element={<ReviewPelamar />} />
-
-          
         </Route>
 
         {/* PELAMAR */}
         <Route path="/pelamar/dashboard" element={<DashboardPelamar />} />
+        <Route path="/pelamar/profil" element={<ProfilPelamar />} />
+        <Route path="/pelamar/cari-lowongan" element={<CariLowongan />} />
+        <Route path="/pelamar/riwayat-lamaran" element={<RiwayatLamaran />} />
+        <Route path="/pelamar/lowongan-simpan" element={<LowonganSimpan />} />
+
       </Routes>
 
       {!hideNavbarFooter && <Footer />}
