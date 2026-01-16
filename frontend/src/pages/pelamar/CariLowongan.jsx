@@ -176,61 +176,100 @@ const CariLowongan = () => {
           </div>
 
           {/* GRID CARD */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {jobsData.map((job, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl shadow-sm p-5 flex flex-col justify-between min-h-307px"
-              >
-                {/* HEADER */}
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-gray-800">{job.title}</h3>
-                  <span className="text-sm text-blue-600 font-medium">{job.salary}</span>
-                </div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {jobsData.map((job, index) => (
+    <div
+      key={index}
+      className="bg-white rounded-xl shadow p-5 flex flex-col"
+    >
+      {/* === ISI CARD (GAP ±20px) === */}
+      <div className="space-y-5 flex-1">
 
-                {/* TAGS */}
-                <div className="flex flex-wrap gap-2 text-xs mt-2">
-                  {job.tags.map((tag, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-gray-100 rounded-full">{tag}</span>
-                  ))}
-                </div>
+        {/* HEADER */}
+        <div className="flex justify-between items-start">
+          <h4 className="text-sm font-semibold text-gray-800">
+            {job.title}
+          </h4>
+          <span className="text-blue-600 text-sm font-medium">
+            {job.salary}
+          </span>
+        </div>
 
-                {/* COMPANY & LOCATION */}
-                <div className="flex items-start gap-4 mt-4">
-                  {/* ICON KIRI */}
-                  <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-                    <img src={iconUserProfile} className="w-4" />
-                  </div>
+        {/* TAG */}
+        <div className="flex flex-wrap gap-5">
+          {job.tags.map((tag, idx) => (
+            <span
+              key={idx}
+              className="
+                px-5 py-2
+                bg-[#409144]/15
+                text-[#409144]
+                text-sm font-medium
+                rounded-full
+                cursor-default
+              "
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
 
-                  {/* GARIS VERTIKAL */}
-                  <div className="w-px bg-gray-200 self-stretch" />
+        {/* INFO PERUSAHAAN */}
+<div className="flex gap-5">
+  {/* AVATAR + GARIS */}
+  <div className="flex items-start gap-5">
+    <div
+      className="
+        w-14 h-14 rounded-full bg-gray-100
+        flex items-center justify-center
+        ring-1 ring-black/30 ring-offset-1 ring-offset-white
+        shrink-0
+      "
+    >
+      <img
+        src={job.logo || iconUserProfile}  // pakai logo kalau ada, fallback ke icon
+        alt="Company"
+        className="w-8 h-8"
+      />
+    </div>
+    <div className="border-l border-gray-300 h-14" />
+  </div>
 
-                  {/* INFO */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
-                      <img src={iconChecCircle} className="w-4" />
-                      <span className="text-blue-600 font-medium">{job.company}</span>
-                    </div>
+  {/* TEKS */}
+  <div className="space-y-1">
+    {/* PERUSAHAAN */}
+    <div className="flex items-center gap-2 text-lg text-blue-600 font-medium">
+      <img src={iconChecCircle} alt="Verified" className="w-5 h-5" />
+      <span>{job.company}</span>
+    </div>
 
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <img src={iconLocationBlack} className="w-4" />
-                      {job.location}
-                    </div>
-                  </div>
-                </div>
+    {/* LOKASI */}
+    <div className="flex items-center gap-2 text-sm text-gray-600">
+      <img src={iconLocationBlack} alt="Lokasi" className="w-5 h-5" />
+      <span>{job.location}</span>
+    </div>
+  </div>
+</div>
 
-                {/* FOOTER */}
-                <div className="border-t border-gray-100 mt-4 pt-3 flex justify-between items-center">
-                  <span className="text-xs text-gray-400">{job.posted}</span>
-                  <img
-                    src={iconSave}
-                    alt="save"
-                    className="w-4 opacity-70 hover:opacity-100 cursor-pointer"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+
+        <hr className="border-gray-200" />
+      </div>
+
+      {/* FOOTER */}
+      <div className="flex justify-between items-center pt-5">
+        <span className="text-xs text-gray-500">
+          {job.posted}
+        </span>
+        <img
+          src={iconSave}
+          alt="save"
+          className="w-5 h-5 cursor-pointer"
+        />
+      </div>
+    </div>
+  ))}
+</div>
+
 
         </div>
       </div>

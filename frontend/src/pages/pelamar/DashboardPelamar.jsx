@@ -10,6 +10,24 @@ import iconUserPelamar from "../../assets/icons/ProfilPelamar/user-profile.svg";
 import iconArrowRight from "../../assets/icons/ProfilPelamar/arrow-right.svg";
 import iconSavePelamar from "../../assets/icons/ProfilPelamar/save.svg";
 
+const rekomendasiLowongan = [
+  {
+    posisi: "UI/UX Designer",
+    gaji: "Rp 4jt–6 jt",
+    tags: ["UI/UX", "Fulltime", "Minimal (S1)", "2 jt-3 jt", "+10"],
+    perusahaan: "PT. SURYA MEDIA UTAMA",
+    lokasi: "Sleman, Jogja",
+    waktu: "14 hari yang lalu",
+  },
+  {
+    posisi: "UI/UX Designer",
+    gaji: "Rp 2jt–4 jt",
+    tags: ["UI/UX", "Fulltime", "Minimal (SMK)", "+5"],
+    perusahaan: "LAZENDA",
+    lokasi: "Medan, Sumatra Utara",
+    waktu: "12 hari yang lalu",
+  },
+];
 
 const DashboardPelamar = () => {
   return (
@@ -59,7 +77,7 @@ const DashboardPelamar = () => {
       <h3 className="text-3xl font-bold text-gray-800">
         12
       </h3>
-      <p className="text-sm font-medium text-gray-700 mt-1">
+      <p className="text-lg font-medium text-gray-700 mt-1">
         Total Lamaran
       </p>
       <span className="text-xs text-blue-600">
@@ -87,7 +105,7 @@ const DashboardPelamar = () => {
       <h3 className="text-3xl font-bold text-gray-800">
         5
       </h3>
-      <p className="text-sm font-medium text-gray-700 mt-1">
+      <p className="text-lg font-medium text-gray-700 mt-1">
         Sedang Ditinjau
       </p>
       <span className="text-xs text-blue-600">
@@ -115,7 +133,7 @@ const DashboardPelamar = () => {
       <h3 className="text-3xl font-bold text-gray-800">
         2
       </h3>
-      <p className="text-sm font-medium text-gray-700 mt-1">
+      <p className="text-lg font-medium text-gray-700 mt-1">
         Lolos Seleksi
       </p>
       <span className="text-xs text-blue-600">
@@ -149,7 +167,7 @@ const DashboardPelamar = () => {
     </div>
 
     {/* TEXT */}
-    <span className="text-sm text-gray-700">
+    <span className="text-lg text-gray-700">
       Cara sukses menghadapi Tes Psikotes di Kantor AUM.
     </span>
   </div>
@@ -167,7 +185,7 @@ const DashboardPelamar = () => {
       />
     </div>
 
-    <span className="text-sm text-gray-700">
+    <span className="text-lg text-gray-700">
       Panduan Interview Tatap Muka bagi Pemula.
     </span>
   </div>
@@ -184,117 +202,103 @@ const DashboardPelamar = () => {
   Rekmendasi Lamaran Terbaru Sesuai Keahlianmu
 </div>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  {/* CARD */}
-  <div className="bg-white rounded-b-2xl shadow-sm p-5 flex flex-col justify-between min-h-307px">
-    
-    {/* HEADER */}
-    <div className="flex justify-between items-start">
-      <h3 className="font-semibold text-gray-800">UI/UX Designer</h3>
-      <span className="text-sm text-blue-600 font-medium">
-        Rp 4jt-6 jt
-      </span>
-    </div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {rekomendasiLowongan.map((item, index) => (
+        <div
+          key={index}
+          className="bg-white rounded-xl shadow p-5 flex flex-col"
+        >
+          {/* === ISI CARD (GAP ±20px) === */}
+          <div className="space-y-5 flex-1">
+            {/* HEADER */}
+            <div className="flex justify-between items-start">
+              <h4 className="font-semibold text-lg text-gray-800">
+                {item.posisi}
+              </h4>
+              <span className="text-blue-600 text-sm font-medium">
+                {item.gaji}
+              </span>
+            </div>
 
-    {/* TAGS */}
-    <div className="flex flex-wrap gap-4 text-xs mt-2">
-      <span className="px-3 py-1 bg-gray-100 rounded-full">UI/UX</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">Fulltime</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">Minimal (S1)</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">2 jt-3 jt</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">+10</span>
-    </div>
+            {/* TAGS */}
+            <div className="flex flex-wrap gap-5">
+              {item.tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className="
+                    px-5 py-2
+                    bg-[#409144]/15
+                    text-[#409144]
+                    text-sm font-medium
+                    rounded-full
+                  "
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
 
-    {/* COMPANY & LOCATION */}
-    <div className="flex items-start gap-4 mt-4">
-      {/* ICON KIRI */}
-      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-        <img src={iconUserPelamar} className="w-4" />
-      </div>
+            {/* INFO PERUSAHAAN */}
+            <div className="flex gap-5">
+              {/* AVATAR + GARIS */}
+              <div className="flex items-start gap-5">
+                <div
+                  className="
+                    w-14 h-14 rounded-full bg-gray-100
+                    flex items-center justify-center
+                    ring-2 ring-gray-200 ring-offset-1 ring-offset-white
+                    shrink-0
+                  "
+                >
+                  <img
+                    src={iconUserPelamar}
+                    alt="Company"
+                    className="w-8 h-8"
+                  />
+                </div>
+                <div className="border-l border-gray-300 h-14" />
+              </div>
 
-      {/* GARIS VERTIKAL */}
-      <div className="w-px bg-gray-200 self-stretch" />
+              {/* TEKS */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-blue-600 font-medium">
+                  <img
+                    src={iconCheckCirclePelamar}
+                    className="w-5 h-5"
+                    alt="Verified"
+                  />
+                  <span>{item.perusahaan}</span>
+                </div>
 
-      {/* INFO */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-4 text-sm">
-          <img src={iconCheckCirclePelamar} className="w-4" />
-          <span className="text-blue-600 font-medium">
-            PT. SURYA MEDIA UTAMA
-          </span>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <img
+                    src={iconLocationPelamar}
+                    className="w-5 h-5"
+                    alt="Lokasi"
+                  />
+                  <span>{item.lokasi}</span>
+                </div>
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+          </div>
+
+          {/* FOOTER */}
+          <div className="flex justify-between items-center pt-5">
+            <span className="text-xs text-gray-500">{item.waktu}</span>
+            <img
+              src={iconSavePelamar}
+              className="w-5 h-5 cursor-pointer"
+              alt="Save"
+            />
+          </div>
         </div>
-
-        <div className="flex items-center gap-4 text-xs text-gray-500">
-          <img src={iconLocationPelamar} className="w-4" />
-          Sleman, Jogja
-        </div>
-      </div>
+      ))}
     </div>
 
-    {/* GARIS HORIZONTAL */}
-    <div className="border-t border-gray-100 mt-4 pt-3 flex justify-between items-center">
-      <span className="text-xs text-gray-400">
-        14 hari yang lalu
-      </span>
 
-      <img
-        src={iconSavePelamar}
-        alt="save"
-        className="w-4 opacity-70 hover:opacity-100 cursor-pointer"
-      />
-    </div>
-  </div>
 
-  {/* CARD 2 (tinggal ganti data) */}
-  <div className="bg-white rounded-b-2xl shadow-sm p-5 flex flex-col justify-between min-h-307px">
-    <div className="flex justify-between items-start">
-      <h3 className="font-semibold text-gray-800">UI/UX Designer</h3>
-      <span className="text-sm text-blue-600 font-medium">
-        Rp 2jt-4 jt
-      </span>
-    </div>
-
-    <div className="flex flex-wrap gap-4 text-xs mt-2">
-      <span className="px-3 py-1 bg-gray-100 rounded-full">UI/UX</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">Fulltime</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">Minimal (SMK)</span>
-      <span className="px-3 py-1 bg-gray-100 rounded-full">+5</span>
-    </div>
-
-    <div className="flex items-start gap-4 mt-4">
-      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-        <img src={iconUserPelamar} className="w-4" />
-      </div>
-
-      <div className="w-px bg-gray-200 self-stretch" />
-
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-sm">
-          <img src={iconCheckCirclePelamar} className="w-4" />
-          <span className="text-blue-600 font-medium">
-            LAZENDA
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <img src={iconLocationPelamar} className="w-4" />
-          Medan, Sumatra Utara
-        </div>
-      </div>
-    </div>
-
-    <div className="border-t border-gray-100 mt-4 pt-3 flex justify-between items-center">
-      <span className="text-xs text-gray-400">
-        12 hari yang lalu
-      </span>
-
-      <img
-        src={iconSavePelamar}
-        className="w-4 opacity-70 hover:opacity-100 cursor-pointer"
-      />
-    </div>
-  </div>
-</div>
 
 
         
