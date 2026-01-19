@@ -15,6 +15,8 @@ import CheckEmail from "./auth/CheckEmail";
 import ActivateAccount from "./auth/ActivateAccount";
 import SetPassword from "./auth/SetPassword";
 
+import LoginAdminSuper from "./auth/LoginAdminSuper";
+
 // AdminAUM
 import DashboardAdminAum from "./pages/adminAum/DashboardAdminAum";
 import ProfilAum from "./pages/adminAum/ProfilAum";
@@ -36,14 +38,22 @@ import CariLowongan from "./pages/pelamar/CariLowongan";
 import RiwayatLamaran from "./pages/pelamar/RiwayatLamaran";
 import LowonganSimpan from "./pages/pelamar/LowonganSimpan";
 
+// PAGES SUPER ADMIN
+import AdminSuper from "./pages/adminSuper/DashboardAdminSuper";
+import PengajuanAum from "./pages/adminSuper/PengajuanAum";
+import ManajemenUser from "./pages/adminSuper/ManajemenUser";
+
+
 
 function App() {
   const location = useLocation();
 
-  const hideNavbarFooter =
-    location.pathname.startsWith("/admin-aum") ||
-    location.pathname.startsWith("/auth") ||
-    location.pathname.startsWith("/pelamar");
+const hideNavbarFooter =
+  location.pathname.startsWith("/admin-aum") ||
+  location.pathname.startsWith("/auth") ||
+  location.pathname.startsWith("/pelamar") ||
+  location.pathname.startsWith("/admin-super");
+
 
   return (
     <>
@@ -58,6 +68,8 @@ function App() {
         <Route path="/auth/check-email" element={<CheckEmail />} />
         <Route path="/auth/activate" element={<ActivateAccount />} />
         <Route path="/auth/set-password" element={<SetPassword />} />
+
+        <Route path="/auth/login-admin-super" element={<LoginAdminSuper />} />
 
         {/* ADMIN AUM (PROTECTED) */}
         <Route element={<ProtectedRoute allowedRole={["company_hrd"]} />}>
@@ -80,6 +92,12 @@ function App() {
         <Route path="/pelamar/cari-lowongan" element={<CariLowongan />} />
         <Route path="/pelamar/riwayat-lamaran" element={<RiwayatLamaran />} />
         <Route path="/pelamar/lowongan-simpan" element={<LowonganSimpan />} />
+
+        {/* ADMIN SUPER */}
+        <Route path="/admin-super/dashboard" element={<AdminSuper />} />
+        <Route path="/admin-super/pengajuan-aum" element={<PengajuanAum />} />
+        <Route path="/admin-super/manajemen-user" element={<ManajemenUser />} />
+
 
       </Routes>
 
