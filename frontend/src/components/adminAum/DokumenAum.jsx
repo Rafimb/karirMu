@@ -6,7 +6,7 @@ import checkIcon from "../../assets/icons/ProfilAum/check.svg";
 /* ================= Sub Component ================= */
 const DocumentItem = ({ title, isUploaded, onUpload }) => {
   return (
-    <div className="flex flex-col gap-2">
+      <div className="space-y-6">
       <label className="text-sm text-gray-800">{title}</label>
 
 

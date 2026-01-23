@@ -1,6 +1,13 @@
 import AdminSuperLayout from "../../components/layout/AdminSuperLayout";
 import documentIcon from "../../assets/icons/ProfilAdminSuper/document-text-black.svg";
+
+import { useNavigate } from "react-router-dom";
+
+
+
 const PengajuanAum = () => {
+
+  const navigate = useNavigate();
 
     const data = [
   {
@@ -24,6 +31,7 @@ const PengajuanAum = () => {
       "Pengajuan ditolak. Silakan perbaiki data dan ajukan kembali.",
   },
 ];
+
 
 
   return (
@@ -148,19 +156,23 @@ const PengajuanAum = () => {
 
             {/* ACTION */}
             <div className="flex justify-end">
-              <button
-                className="
-                  px-4 py-1.5
-                  border border-[#409144]
-                  text-[#409144]
-                  rounded-full
-                  text-sm
-                  hover:bg-[#409144]/10
-                  transition
-                "
-              >
-                Lihat Detail
-              </button>
+            <button
+  onClick={() =>
+    navigate("/admin-super/detail-pengajuan-aum")
+  }
+  className="
+    px-4 py-1.5
+    border border-[#409144]
+    text-[#409144]
+    rounded-full
+    text-sm
+    hover:bg-[#409144]/10
+    transition
+  "
+>
+  Lihat Detail
+</button>
+
             </div>
           </div>
         ))}

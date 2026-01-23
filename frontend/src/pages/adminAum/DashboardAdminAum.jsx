@@ -38,7 +38,7 @@ const DashboardAdminAum = () => {
   return (
     <AdminAumLayout>
       {/* WRAPPER UTAMA */}
-      <div className="w-full flex justify-center px-3 sm:px-4 md:px-6 py-6">
+        <div className="space-y-6">
         <div className="flex flex-col gap-4 w-full max-w-1124px">
 
           {/* HEADER DASHBOARD */}

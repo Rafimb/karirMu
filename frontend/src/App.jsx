@@ -37,11 +37,17 @@ import ProfilPelamar from "./pages/pelamar/ProfilPelamar";
 import CariLowongan from "./pages/pelamar/CariLowongan";
 import RiwayatLamaran from "./pages/pelamar/RiwayatLamaran";
 import LowonganSimpan from "./pages/pelamar/LowonganSimpan";
+import PendidikanPelamar from "./pages/pelamar/PendidikanPelamar";
+import PengalamanPelamar from "./pages/pelamar/PengalamanPelamar";
+import DetailProfilPelamar from "./pages/pelamar/DetailProfilPelamar";
+import DetailLowonganPelamar from "./pages/pelamar/DetailLowonganPelamar";
+
 
 // PAGES SUPER ADMIN
 import AdminSuper from "./pages/adminSuper/DashboardAdminSuper";
 import PengajuanAum from "./pages/adminSuper/PengajuanAum";
 import ManajemenUser from "./pages/adminSuper/ManajemenUser";
+import DetailPengajuanAum from "./pages/adminSuper/DetailPengajuanAum";
 
 
 
@@ -92,11 +98,15 @@ const hideNavbarFooter =
         <Route path="/pelamar/cari-lowongan" element={<CariLowongan />} />
         <Route path="/pelamar/riwayat-lamaran" element={<RiwayatLamaran />} />
         <Route path="/pelamar/lowongan-simpan" element={<LowonganSimpan />} />
-
+        <Route path="/pelamar/pendidikan-pelamar" element={<PendidikanPelamar />} />
+        <Route path="/pelamar/pengalaman-pelamar" element={<PengalamanPelamar />} />
+        <Route path="/pelamar/detail-profil-pelamar" element={<DetailProfilPelamar />} />
+        <Route path="/pelamar/detail-lowongan-pelamar" element= {<DetailLowonganPelamar />} />
         {/* ADMIN SUPER */}
         <Route path="/admin-super/dashboard" element={<AdminSuper />} />
         <Route path="/admin-super/pengajuan-aum" element={<PengajuanAum />} />
         <Route path="/admin-super/manajemen-user" element={<ManajemenUser />} />
+        <Route path="/admin-super/detail-pengajuan-aum" element={<DetailPengajuanAum />} />
 
 
       </Routes>

@@ -33,7 +33,6 @@ const handleLogoChange = (e) => {
 };
 
 
-
   const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData((prev) => ({
@@ -112,8 +111,8 @@ useEffect(() => {
 
   return (
     <AdminAumLayout>
-      <div className="w-full flex justify-center px-4 py-6">
-        <div className="w-full max-w-1124px flex flex-col gap-4">
+        <div className="space-y-6">
+    <div className="flex flex-col gap-4">
 
           {/* HEADER */}
           <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">
@@ -276,6 +275,7 @@ useEffect(() => {
 
 
 {/* PROFIL AUM */}
+
 <div
   className="flex  rounded-t-2xl overflow-hidden shadow-sm"
   style={{
@@ -469,7 +469,7 @@ useEffect(() => {
 const Row = ({ label, value }) => (
   <div className="flex px-4 py-3">
     <span className="w-56 text-gray-500">{label}</span>
-    <span className="font-medium break-all">{value}</span>
+    <span className="font-medium break-all line-calmp-1">{value}</span>
   </div>
 );
 const Input = ({ label, name, value, onChange }) => (

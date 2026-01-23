@@ -93,8 +93,8 @@ useEffect(() => {
 
   return (
     <AdminAumLayout>
-      <div className="w-full flex justify-center px-4 py-6">
-        <div className="w-full max-w-1124px flex flex-col gap-4">
+       <div className="space-y-6">
+    <div className="w-full flex flex-col gap-4">
 
           {/* PAGE TITLE */}
           <div className="bg-white px-4 py-3 rounded-md shadow-sm text-sm font-semibold">

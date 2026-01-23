@@ -115,7 +115,7 @@ const handleSubmit = async () => {
 )}
 
 
-     <div className="w-full flex justify-center px-4 py-6">
+     <div className="space-y-6">
         <div className="w-full max-w-1124px flex flex-col gap-4">
 
           {/* HEADER */}

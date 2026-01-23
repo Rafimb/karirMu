@@ -10,6 +10,9 @@ import iconUserPelamar from "../../assets/icons/ProfilPelamar/user-profile.svg";
 import iconArrowRight from "../../assets/icons/ProfilPelamar/arrow-right.svg";
 import iconSavePelamar from "../../assets/icons/ProfilPelamar/save.svg";
 
+import { useNavigate } from "react-router-dom";
+
+
 const rekomendasiLowongan = [
   {
     posisi: "UI/UX Designer",
@@ -29,7 +32,10 @@ const rekomendasiLowongan = [
   },
 ];
 
+
+
 const DashboardPelamar = () => {
+  const navigate = useNavigate();
   return (
     <PelamarLayout>
       <div className="space-y-6">
@@ -261,7 +267,10 @@ const DashboardPelamar = () => {
 
               {/* TEKS */}
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-blue-600 font-medium">
+               <div
+                  className="flex items-center gap-2 text-blue-600 font-medium cursor-pointer hover:underline"
+                  onClick={() => navigate("/pelamar/detail-lowongan-pelamar")}
+                >
                   <img
                     src={iconCheckCirclePelamar}
                     className="w-5 h-5"
