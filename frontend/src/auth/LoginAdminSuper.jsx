@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginImage from "../assets/img/login2.png";
+import LoginImage from "../assets/img/auth.svg";
 import EyeIcon from "../assets/icons/eye.svg";
 import EyeSlashIcon from "../assets/icons/eye-slash.svg";
 

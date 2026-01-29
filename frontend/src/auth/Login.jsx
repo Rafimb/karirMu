@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import LoginImage from "../assets/img/login2.png";
+import LoginImage from "../assets/img/auth.svg";
 import EyeIcon from "../assets/icons/eye.svg";
 import EyeSlashIcon from "../assets/icons/eye-slash.svg";
 

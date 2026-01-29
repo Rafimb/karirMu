@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import PelamarLayout from "../../components/layout/PelamarLayout";
+import StepperPelamar from "../../components/pelamar/StepperPelamar";
 
 // ICON
 import deleteIcon from "../../assets/icons/ProfilPelamar/trash.svg";
 import plusIcon from "../../assets/icons/ProfilPelamar/add-circle.svg";
 
 const PendidikanPelamar = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const [pendidikanList, setPendidikanList] = useState([
     {
       id: 1,
@@ -57,14 +60,15 @@ const PendidikanPelamar = () => {
   };
 
   const handleSimpan = () => {
-  // di sini nanti bisa ditambah API save
-  navigate("/pelamar/pengalaman-pelamar");
-};
-
+    navigate("/pelamar/pengalaman-pelamar");
+  };
 
   return (
     <PelamarLayout>
       <div className="space-y-6">
+
+        {/* ===== STEPPER ===== */}
+        <StepperPelamar currentStep={2} />
 
         {/* ================= HEADER ================= */}
         <div
@@ -83,11 +87,11 @@ const PendidikanPelamar = () => {
               key={item.id}
               onClick={() => setAktifId(item.id)}
               className={`border rounded-xl px-6 py-4 flex justify-between cursor-pointer
-              ${
-                aktifId === item.id
-                  ? "border-dashed border-blue-400"
-                  : "border-gray-200"
-              }`}
+                ${
+                  aktifId === item.id
+                    ? "border-dashed border-blue-400"
+                    : "border-gray-200"
+                }`}
             >
               <div className="space-y-1">
                 <p className="text-sm font-semibold">
@@ -242,9 +246,10 @@ const PendidikanPelamar = () => {
 
         {/* ================= SIMPAN ================= */}
         <div className="flex justify-end bg-white rounded-xl shadow px-8 py-5">
-          <button 
-          onClick={handleSimpan}
-          className="bg-[#409144] text-white px-8 py-2.5 rounded-md text-sm font-semibold">
+          <button
+            onClick={handleSimpan}
+            className="bg-[#409144] text-white px-8 py-2.5 rounded-md text-sm font-semibold"
+          >
             Simpan
           </button>
         </div>

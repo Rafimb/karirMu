@@ -119,11 +119,20 @@ export default function DetailLowongan() {
 
             <div className="flex gap-3">
               <button
-                onClick={() => setShowEditModal(true)}
-                className="border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-600 hover:text-white transition"
-              >
-                Edit Lowongan
-              </button>
+  onClick={() => setShowEditModal(true)}
+  className="
+    border border-[#25A249]
+    text-[#25A249]
+    px-4 py-2
+    rounded-md
+    text-sm font-semibold
+    hover:bg-[#25A249]
+    hover:text-white
+    transition
+  "
+>
+  Edit Lowongan
+</button>
               <button
                 onClick={() => setShowConfirm(true)}
                 className="border border-red-600 text-red-600 px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-600 hover:text-white transition"

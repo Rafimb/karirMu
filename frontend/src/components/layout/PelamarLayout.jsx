@@ -14,7 +14,7 @@ const PelamarLayout = ({ children }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <div className="bg-white border border-gray-200">
         {/* ================= TOPBAR ================= */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
@@ -60,7 +60,7 @@ const PelamarLayout = ({ children }) => {
           <SidebarPelamar open={open} />
 
           {/* CONTENT */}
-          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+          <main className="flex-1 p-6 bg-[#E0EAE7] overflow-y-auto">
             {children}
           </main>
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import RegisterImage from "../assets/img/login2.png";
+import RegisterImage from "../assets/img/auth.svg";
 
 const Register = () => {
   const navigate = useNavigate();

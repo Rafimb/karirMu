@@ -41,6 +41,8 @@ import PendidikanPelamar from "./pages/pelamar/PendidikanPelamar";
 import PengalamanPelamar from "./pages/pelamar/PengalamanPelamar";
 import DetailProfilPelamar from "./pages/pelamar/DetailProfilPelamar";
 import DetailLowonganPelamar from "./pages/pelamar/DetailLowonganPelamar";
+import StepperPelamar from "./components/pelamar/StepperPelamar";
+import JobCardApplicant from "./components/pelamar/JobCardApplicant";
 
 
 // PAGES SUPER ADMIN
@@ -102,6 +104,9 @@ const hideNavbarFooter =
         <Route path="/pelamar/pengalaman-pelamar" element={<PengalamanPelamar />} />
         <Route path="/pelamar/detail-profil-pelamar" element={<DetailProfilPelamar />} />
         <Route path="/pelamar/detail-lowongan-pelamar" element= {<DetailLowonganPelamar />} />
+        <Route path="/pelamar/Stepper-pelamar" element = {<StepperPelamar /> } /> 
+        <Route path="/pelamar/job-card" element = {<JobCardApplicant /> } /> 
+        
         {/* ADMIN SUPER */}
         <Route path="/admin-super/dashboard" element={<AdminSuper />} />
         <Route path="/admin-super/pengajuan-aum" element={<PengajuanAum />} />

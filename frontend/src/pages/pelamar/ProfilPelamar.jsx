@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import PelamarLayout from "../../components/layout/PelamarLayout";
+import StepperPelamar from "../../components/pelamar/StepperPelamar";
+
 import userIcon from "../../assets/icons/ProfilPelamar/user-profile.svg";
 
 // ICONS
@@ -43,45 +45,34 @@ const Textarea = ({ label, placeholder }) => (
   </div>
 );
 
-/* ===== Main Component ===== */
+/* ================= MAIN ================= */
 const ProfilPelamar = () => {
   const navigate = useNavigate();
-
-  /* FOTO PROFIL */
   const [photo, setPhoto] = useState(null);
-
-  /* FILE CV */
   const [isUploaded, setIsUploaded] = useState(false);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      alert("File harus berupa gambar");
-      return;
-    }
-
+    if (!file || !file.type.startsWith("image/")) return;
     setPhoto(URL.createObjectURL(file));
   };
 
-  const handlePhotoDelete = () => {
-    setPhoto(null);
-  };
+  const handlePhotoDelete = () => setPhoto(null);
 
   const onUploadFile = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIsUploaded(true);
-    }
+    if (e.target.files.length > 0) setIsUploaded(true);
   };
 
   const handleSave = () => {
-    navigate("/pelamar/pendidikan-pelamar"); // ⬅️ arahkan ke PendidikanPelamar.jsx
+    navigate("/pelamar/pendidikan-pelamar");
   };
 
   return (
     <PelamarLayout>
       <div className="space-y-6">
+
+        {/* ===== STEPPER (STEP 1) ===== */}
+        <StepperPelamar currentStep={1} />
 
         {/* ================= BIODATA ================= */}
         <div>
@@ -95,19 +86,14 @@ const ProfilPelamar = () => {
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm mt-4 px-8 py-10 space-y-10">
-
             {/* FOTO PROFIL */}
             <div className="flex items-center gap-10">
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 rounded-full bg-[#F2F4F8] flex items-center justify-center border overflow-hidden">
                   {photo ? (
-                    <img
-                      src={photo}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={photo} className="w-full h-full object-cover" />
                   ) : (
-                    <img src={userIcon} alt="user" className="w-10 opacity-30" />
+                    <img src={userIcon} className="w-10 opacity-30" />
                   )}
                 </div>
 
@@ -116,21 +102,20 @@ const ProfilPelamar = () => {
                     Upload Photo
                     <input
                       type="file"
-                      className="hidden"
+                      hidden
                       accept="image/*"
                       onChange={handlePhotoUpload}
                     />
                   </label>
 
-               <button
-  onClick={handlePhotoDelete}
-  className={`text-sm text-red-600 hover:underline text-center ${
-    !photo ? "opacity-50 cursor-not-allowed" : ""
-  }`}
->
-  Hapus
-</button>
-
+                  <button
+                    onClick={handlePhotoDelete}
+                    className={`text-sm text-red-600 hover:underline ${
+                      !photo && "opacity-50 cursor-not-allowed"
+                    }`}
+                  >
+                    Hapus
+                  </button>
                 </div>
               </div>
 
@@ -157,7 +142,10 @@ const ProfilPelamar = () => {
               <Input label="Usia" placeholder="Usia / Umur" />
             </div>
 
-            <Textarea label="Alamat Lengkap" placeholder="Detail jalan, nomor gedung, dan RT/RW" />
+            <Textarea
+              label="Alamat Lengkap"
+              placeholder="Detail jalan, nomor gedung, dan RT/RW"
+            />
           </div>
         </div>
 
@@ -183,7 +171,7 @@ const ProfilPelamar = () => {
                   Pilih File
                   <input
                     type="file"
-                    className="hidden"
+                    hidden
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={onUploadFile}
                   />
@@ -191,13 +179,13 @@ const ProfilPelamar = () => {
 
                 <div className="flex items-center gap-2 px-4 py-2 text-sm flex-1">
                   {isUploaded ? (
-                    <span className="text-green-600 font-medium">
-                      Terunggah
-                    </span>
+                    <span className="text-green-600 font-medium">Terunggah</span>
                   ) : (
                     <>
-                      <img src={folderOpenIcon} className="w-4 h-4 opacity-60" />
-                      <span className="text-gray-500">Belum ada file dipilih!</span>
+                      <img src={folderOpenIcon} className="w-4 opacity-60" />
+                      <span className="text-gray-500">
+                        Belum ada file dipilih!
+                      </span>
                     </>
                   )}
                 </div>
@@ -213,7 +201,7 @@ const ProfilPelamar = () => {
                   placeholder="https://portfolio.com"
                   className="w-full bg-transparent text-sm outline-none"
                 />
-                <img src={linkIcon} className="w-4 h-4 opacity-60" />
+                <img src={linkIcon} className="w-4 opacity-60" />
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 const { client } = require("../config/database");
 const { ObjectId } = require("mongodb");
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 
 const {
   COMPANY_DOCUMENT_VALUES,
@@ -9,8 +11,14 @@ const {
   DOCUMENT_STATUS_ENUM,
 } = require("../constants/companyStatusEnum");
 
+// ✅ KONFIGURASI CLOUDINARY - WAJIB ADA
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const users = client.db("karirMu").collection("users")
+const users = client.db("karirMu").collection("users");
 
 const companyDocuments = client
     .db("karirMu")
@@ -297,59 +305,253 @@ exports.ValidateDocument = async (req, res) => {
 
 exports.updateCompanyProfile = async (req, res) => {
   try {
+    console.log('╔════════════════════════════════════════╗');
+    console.log('║   UPDATE COMPANY PROFILE - START      ║');
+    console.log('╚════════════════════════════════════════╝');
+    
     const userId = req.user.userId;
+    console.log('📌 User ID:', userId);
 
-    // 🔹 WAJIB ObjectId
+    // Validasi userId
+    if (!userId || !ObjectId.isValid(userId)) {
+      console.log('❌ Invalid User ID');
+      return res.status(401).json({
+        message: "User ID tidak valid",
+      });
+    }
+
     const userObjectId = new ObjectId(userId);
 
+    // Cari HRD berdasarkan user_id
     const hrd = await companyHrd.findOne({ user_id: userObjectId });
+    console.log('👤 HRD Data:', hrd ? 'Found' : 'Not Found');
 
     if (!hrd?.company_id) {
+      console.log('❌ Company ID not found in HRD');
       return res.status(404).json({
         message: "Company belum ada",
       });
     }
 
     const companyId = new ObjectId(hrd.company_id);
+    console.log('🏢 Company ID:', companyId);
+
+    // Inisialisasi updateData
     const updateData = { updated_at: new Date() };
 
-    // 🔹 copy body ke updateData
+    // Copy semua field dari body ke updateData
+    console.log('📝 Request Body Fields:');
     Object.keys(req.body).forEach((key) => {
-      updateData[key] = req.body[key];
+      if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
+        updateData[key] = req.body[key];
+        console.log(`   ✓ ${key}: ${req.body[key]}`);
+      }
     });
 
-    // 🔹 HANDLE LOGO
+    // HANDLE LOGO UPLOAD
     if (req.file) {
-      const upload = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          {
-            folder: `karirMu/companies/logo/${companyId}`,
-            resource_type: "image",
-          },
-          (err, result) => (err ? reject(err) : resolve(result))
-        );
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
+      console.log('');
+      console.log('📸 Processing Logo Upload...');
+      console.log('   File Name:', req.file.originalname);
+      console.log('   File Type:', req.file.mimetype);
+      console.log('   File Size:', (req.file.size / 1024).toFixed(2), 'KB');
 
-      updateData.logo_url = upload.secure_url;
+      try {
+        // Upload ke Cloudinary
+        const upload = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: `karirMu/companies/logo/${companyId}`,
+              resource_type: "image",
+              public_id: `logo_${Date.now()}`,
+              overwrite: true,
+              invalidate: true,
+            },
+            (err, result) => {
+              if (err) {
+                console.error('❌ Cloudinary Upload Error:', err);
+                return reject(err);
+              }
+              console.log('✅ Cloudinary Upload Success');
+              console.log('   URL:', result.secure_url);
+              resolve(result);
+            }
+          );
+          
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+
+        updateData.logo_url = upload.secure_url;
+        console.log('✅ Logo URL added to update data');
+      } catch (uploadError) {
+        console.error('❌ Error uploading to Cloudinary:', uploadError);
+        return res.status(500).json({
+          message: "Gagal upload logo",
+          error: uploadError.message,
+        });
+      }
+    } else {
+      console.log('ℹ️  No logo file to upload');
     }
 
-    await companies.updateOne(
+    console.log('');
+    console.log('💾 Final Update Data:', JSON.stringify(updateData, null, 2));
+
+    // Update company di database
+    const updateResult = await companies.updateOne(
       { _id: companyId },
       { $set: updateData }
     );
 
-    // 🔹 KEMBALIKAN DATA COMPANY (INI YANG BIKIN FRONTEND UPDATE)
-    const updatedCompany = await companies.findOne({ _id: companyId });
+    console.log('');
+    console.log('📊 Update Result:');
+    console.log('   Matched:', updateResult.matchedCount);
+    console.log('   Modified:', updateResult.modifiedCount);
 
+    if (updateResult.matchedCount === 0) {
+      console.log('❌ Company not found in database');
+      return res.status(404).json({
+        message: "Company tidak ditemukan",
+      });
+    }
+
+    // Ambil data company yang sudah diupdate
+    const updatedCompany = await companies.findOne({ _id: companyId });
+    
+    if (!updatedCompany) {
+      console.log('❌ Failed to retrieve updated company');
+      return res.status(500).json({
+        message: "Gagal mengambil data company yang diupdate",
+      });
+    }
+
+    console.log('');
+    console.log('✅ Company Updated Successfully');
+    console.log('   Company Name:', updatedCompany.company_name);
+    console.log('   Logo URL:', updatedCompany.logo_url || 'No logo');
+    console.log('');
+    console.log('╔════════════════════════════════════════╗');
+    console.log('║   UPDATE COMPANY PROFILE - END        ║');
+    console.log('╚════════════════════════════════════════╝');
+
+    // Return response
     res.json({
       message: "Company profile berhasil diperbarui",
       company: updatedCompany,
     });
+
   } catch (error) {
-    console.error("ERROR updateCompanyProfile:", error);
+    console.error('');
+    console.error('╔════════════════════════════════════════╗');
+    console.error('║   ERROR - UPDATE COMPANY PROFILE      ║');
+    console.error('╚════════════════════════════════════════╝');
+    console.error('Error Message:', error.message);
+    console.error('Error Stack:', error.stack);
+    
     res.status(500).json({
       message: "Gagal update company",
+      error: error.message,
+    });
+  }
+};
+
+exports.getAllCompanies = async (req, res) => {
+  try {
+    const companiesList = await companies.find({}).toArray();
+    
+    res.json({
+      message: "List of all companies",
+      total: companiesList.length,
+      companies: companiesList,
+    });
+  } catch (error) {
+    console.error("ERROR getAllCompanies:", error);
+    res.status(500).json({
+      message: "Gagal mengambil data companies",
+      error: error.message,
+    });
+  }
+};
+
+exports.getCompanyById = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+
+    if (!ObjectId.isValid(companyId)) {
+      return res.status(400).json({
+        message: "Company ID tidak valid",
+      });
+    }
+
+    const company = await companies.findOne({
+      _id: new ObjectId(companyId),
+    });
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company tidak ditemukan",
+      });
+    }
+
+    const documents = await companyDocuments
+      .find({ company_id: new ObjectId(companyId) })
+      .toArray();
+
+    res.json({
+      message: "Company details",
+      company,
+      documents,
+    });
+  } catch (error) {
+    console.error("ERROR getCompanyById:", error);
+    res.status(500).json({
+      message: "Gagal mengambil data company",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteCompany = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+
+    if (!ObjectId.isValid(companyId)) {
+      return res.status(400).json({
+        message: "Company ID tidak valid",
+      });
+    }
+
+    const companyObjectId = new ObjectId(companyId);
+
+    // Hapus company
+    const deleteResult = await companies.deleteOne({
+      _id: companyObjectId,
+    });
+
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({
+        message: "Company tidak ditemukan",
+      });
+    }
+
+    // Hapus semua documents terkait
+    await companyDocuments.deleteMany({
+      company_id: companyObjectId,
+    });
+
+    // Update company_hrd (set company_id ke null)
+    await companyHrd.updateMany(
+      { company_id: companyObjectId },
+      { $unset: { company_id: "" } }
+    );
+
+    res.json({
+      message: "Company berhasil dihapus",
+    });
+  } catch (error) {
+    console.error("ERROR deleteCompany:", error);
+    res.status(500).json({
+      message: "Gagal menghapus company",
       error: error.message,
     });
   }
