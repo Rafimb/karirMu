@@ -50,6 +50,7 @@ import AdminSuper from "./pages/adminSuper/DashboardAdminSuper";
 import PengajuanAum from "./pages/adminSuper/PengajuanAum";
 import ManajemenUser from "./pages/adminSuper/ManajemenUser";
 import DetailPengajuanAum from "./pages/adminSuper/DetailPengajuanAum";
+import ManajemenBidang from "./pages/adminSuper/ManajemenBidang";
 
 
 
@@ -112,7 +113,7 @@ const hideNavbarFooter =
         <Route path="/admin-super/pengajuan-aum" element={<PengajuanAum />} />
         <Route path="/admin-super/manajemen-user" element={<ManajemenUser />} />
         <Route path="/admin-super/detail-pengajuan-aum" element={<DetailPengajuanAum />} />
-
+        <Route path="/admin-super/manajemen-bidang" element={<ManajemenBidang />} />
 
       </Routes>
 

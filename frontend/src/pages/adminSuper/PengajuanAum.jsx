@@ -143,16 +143,7 @@ const PengajuanAum = () => {
             </div>
 
             
-{/* PESAN */}
-<div>
-  <p className="text-sm text-gray-600 mb-1">
-    Alasan / Pesan (Opsional)
-  </p>
 
-  <div className="bg-gray-100 p-3 rounded-md text-sm text-gray-700 h-24">
-    {item.message}
-  </div>
-</div>
 
             {/* ACTION */}
             <div className="flex justify-end">

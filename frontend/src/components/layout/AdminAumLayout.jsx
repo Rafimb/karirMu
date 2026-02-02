@@ -36,7 +36,7 @@ const AdminAumLayout = ({ children }) => {
             <span className="text-sm text-gray-600">Halo, Admin AUM</span>
 
             <button
-              onClick={() => navigate("/auth/login")}
+              onClick={() => navigate("/")}
               className="flex items-center gap-2"
             >
               <img

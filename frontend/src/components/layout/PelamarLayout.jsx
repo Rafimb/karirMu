@@ -41,7 +41,7 @@ const PelamarLayout = ({ children }) => {
             </span>
 
             <button
-              onClick={() => navigate("/auth/login")}
+              onClick={() => navigate("/")}
               className="flex items-center gap-2"
             >
               <img

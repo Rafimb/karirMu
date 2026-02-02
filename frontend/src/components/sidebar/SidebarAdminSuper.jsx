@@ -154,9 +154,9 @@ const SidebarAdminSuper = () => {
 
           <SidebarItem
             icon={usersIcon}
-            text="Manajemen User"
-            active={isActive("/admin-super/manajemen-user")}
-            onClick={() => navigate("/admin-super/manajemen-user")}
+            text="Manajemen Bidang"
+            active={isActive("/admin-super/manajemen-bidang")}
+            onClick={() => navigate("/admin-super/manajemen-bidang")}
           />
         </ul>
       </aside>

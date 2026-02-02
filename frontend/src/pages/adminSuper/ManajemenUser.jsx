@@ -1,11 +1,9 @@
-import AdminSuperLayout from "../../components/layout/AdminSuperLayout";
+import React from 'react'
 
 const ManajemenUser = () => {
   return (
-    <AdminSuperLayout>
-    <div>Manajemen User</div>
-    </AdminSuperLayout>
-  );
-};
+    <div>ManajemenUser</div>
+  )
+}
 
-export default ManajemenUser;
+export default ManajemenUser
